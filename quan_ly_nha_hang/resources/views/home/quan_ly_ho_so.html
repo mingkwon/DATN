@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="vi"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Quản lý hồ sơ - Restaurant AI Manager</title>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@300;400;500;600;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Theme Configuration -->
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#19e65e",
+                        "background-light": "#f6f8f6",
+                        "background-dark": "#112116",
+                        "surface-dark": "#1c261f",
+                        "surface-border": "#3c5344",
+                    },
+                    fontFamily: {
+                        "display": ["Work Sans", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.5rem", "lg": "1rem", "xl": "1.5rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        /* Custom Scrollbar for a cleaner look */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #112116; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #3c5344; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #19e65e; 
+        }
+        
+        /* Smooth transitions */
+        .transition-all {
+            transition-property: all;
+            transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+            transition-duration: 300ms;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-[#111813] dark:text-white font-display min-h-screen flex flex-col overflow-x-hidden">
+<!-- Top Navigation Bar -->
+<header class="sticky top-0 z-50 flex items-center justify-between whitespace-nowrap border-b border-solid border-b-surface-border bg-background-dark/95 backdrop-blur-sm px-6 py-3 lg:px-10">
+<div class="flex items-center gap-8">
+<div class="flex items-center gap-3 text-white">
+<div class="size-8 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined !text-[32px]">restaurant_menu</span>
+</div>
+<h2 class="text-white text-lg font-bold leading-tight tracking-[-0.015em]">Restaurant AI</h2>
+</div>
+<div class="hidden md:flex items-center gap-6">
+<a class="text-[#9db8a6] hover:text-primary hover:font-bold transition-all text-sm font-medium leading-normal" href="#">Trang chủ</a>
+<a class="text-[#9db8a6] hover:text-primary hover:font-bold transition-all text-sm font-medium leading-normal" href="#">Thực đơn</a>
+<a class="text-[#9db8a6] hover:text-primary hover:font-bold transition-all text-sm font-medium leading-normal" href="#">Đặt bàn</a>
+<a class="text-white text-sm font-bold leading-normal relative after:content-[''] after:absolute after:-bottom-5 after:left-0 after:w-full after:h-0.5 after:bg-primary" href="#">Hồ sơ</a>
+</div>
+</div>
+<div class="flex flex-1 justify-end gap-6 items-center">
+<label class="hidden sm:flex flex-col min-w-40 !h-10 max-w-64 group">
+<div class="flex w-full flex-1 items-stretch rounded-xl h-full border border-surface-border bg-surface-dark group-focus-within:border-primary transition-colors">
+<div class="text-[#9db8a6] flex border-none items-center justify-center pl-4 rounded-l-xl border-r-0">
+<span class="material-symbols-outlined">search</span>
+</div>
+<input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-white focus:outline-0 focus:ring-0 border-none bg-transparent focus:border-none h-full placeholder:text-[#9db8a6] px-3 rounded-l-none border-l-0 pl-2 text-sm font-normal leading-normal" placeholder="Tìm món ăn..." value=""/>
+</div>
+</label>
+<div class="relative group cursor-pointer">
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10 border-2 border-primary/20 group-hover:border-primary transition-all" data-alt="User avatar small" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAE9AdreyPsE04vwIzPWDmxjtIezHsHx619iAvkW5vj-phVb6fatt9nMV3IvjgQ5SeIpDCsceDg3mBL0Ll8hq85leZf3n-xijWZQI3KF_YnVI0vicYinrZubrWOa7fzSQ_qWKYnUTPtKHzwixNNrmPX892EzQV5IfNyH8AijqYWrbdnyurxEurYotkV6ebRSr7N7QGu5Zk7gn2HWv0l6ozPdtjwQcgmYLMHihzQkTtstSE6KAdG1pyhXw3DyMOVICvxj-ZbL4U_R-w");'></div>
+<div class="absolute bottom-0 right-0 size-3 bg-primary rounded-full border-2 border-background-dark"></div>
+</div>
+</div>
+</header>
+<!-- Main Content -->
+<main class="layout-container flex h-full grow flex-col w-full items-center">
+<div class="w-full max-w-[960px] px-4 md:px-6 py-8 flex flex-col gap-8">
+<!-- Page Heading -->
+<div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+<div class="flex flex-col gap-2">
+<h1 class="text-white text-3xl md:text-4xl font-black leading-tight tracking-[-0.033em]">Hồ sơ cá nhân</h1>
+<p class="text-[#9db8a6] text-base font-normal">Quản lý thông tin tài khoản và tùy chọn AI gợi ý món ăn</p>
+</div>
+<button class="flex items-center gap-2 px-4 py-2 rounded-lg bg-surface-dark border border-surface-border text-white hover:border-primary hover:text-primary transition-all">
+<span class="material-symbols-outlined text-[20px]">logout</span>
+<span class="text-sm font-bold">Đăng xuất</span>
+</button>
+</div>
+<!-- Profile Header Card -->
+<div class="w-full bg-surface-dark rounded-xl p-6 border border-surface-border relative overflow-hidden">
+<!-- Decorative Glow -->
+<div class="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
+<div class="flex flex-col md:flex-row items-center md:items-start gap-6 relative z-10">
+<div class="relative group">
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-32 border-4 border-background-dark shadow-xl" data-alt="User profile picture large" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAq0QK3HTiXzdVzG2MYOevs55gn8FWK9eVTsHZg-gS4pTVVw5S8qnfVs6W1njCYB2Mv6zzJ0-JlW32Utdru0ENPdrGTWlH_iF_r7vZppYJa_cgE1rXCx83MphDRYGdzpVDaLr7jazvp2IGnNZlQzl1ov9edo11wyHebC31LyEQWk_cAS0H8eVmQOT22YZvNUUNCqxteQZ3ErAs0oHhxpB8kbxYQUKQXtwNeJmv3U51hNeCmz92kdTDwhxG_W1vOzn-zmRzq8YUmdOk");'></div>
+<button class="absolute bottom-0 right-0 bg-primary text-background-dark p-2 rounded-full hover:bg-white transition-colors shadow-lg">
+<span class="material-symbols-outlined text-[20px]">photo_camera</span>
+</button>
+</div>
+<div class="flex flex-col items-center md:items-start flex-1 gap-2 text-center md:text-left pt-2">
+<div class="flex items-center gap-3">
+<h2 class="text-white text-2xl font-bold">Nguyễn Văn A</h2>
+<span class="px-2 py-0.5 rounded bg-primary/20 text-primary text-xs font-bold uppercase tracking-wider border border-primary/30">Khách hàng thân thiết</span>
+</div>
+<p class="text-[#9db8a6]">nguyen.vana@example.com</p>
+<div class="flex items-center gap-2 mt-2 text-[#9db8a6] text-sm bg-background-dark/50 px-3 py-1.5 rounded-lg border border-surface-border">
+<span class="material-symbols-outlined text-[18px] text-primary">restaurant</span>
+<span>Đã ghé thăm 12 lần</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Forms Container -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+<!-- Left Column: Personal Info -->
+<div class="lg:col-span-2 flex flex-col gap-8">
+<!-- Section: General Info -->
+<section>
+<h3 class="text-white text-lg font-bold mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">person</span>
+                            Thông tin chung
+                        </h3>
+<div class="bg-surface-dark rounded-xl p-6 border border-surface-border flex flex-col gap-6">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<label class="flex flex-col gap-2">
+<span class="text-white text-sm font-medium">Họ và tên</span>
+<input class="w-full rounded-xl bg-background-dark border border-surface-border text-white px-4 py-3 focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all placeholder:text-[#9db8a6]" type="text" value="Nguyễn Văn A"/>
+</label>
+<label class="flex flex-col gap-2">
+<span class="text-white text-sm font-medium">Số điện thoại</span>
+<input class="w-full rounded-xl bg-background-dark border border-surface-border text-white px-4 py-3 focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all placeholder:text-[#9db8a6]" type="tel" value="0912 345 678"/>
+</label>
+</div>
+<label class="flex flex-col gap-2">
+<span class="text-white text-sm font-medium flex justify-between">
+                                    Email
+                                    <span class="text-xs text-[#9db8a6] font-normal italic flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">lock</span> 
+                                        Không thể chỉnh sửa
+                                    </span>
+</span>
+<input class="w-full rounded-xl bg-background-dark/50 border border-surface-border text-[#9db8a6] px-4 py-3 cursor-not-allowed opacity-70" disabled="" type="email" value="nguyen.vana@example.com"/>
+</label>
+</div>
+</section>
+<!-- Section: Security -->
+<section>
+<h3 class="text-white text-lg font-bold mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">lock_reset</span>
+                            Bảo mật
+                        </h3>
+<div class="bg-surface-dark rounded-xl p-6 border border-surface-border flex flex-col gap-6">
+<label class="flex flex-col gap-2 relative group">
+<span class="text-white text-sm font-medium">Mật khẩu hiện tại</span>
+<input class="w-full rounded-xl bg-background-dark border border-surface-border text-white px-4 py-3 focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all" placeholder="••••••••" type="password"/>
+<span class="material-symbols-outlined absolute right-4 bottom-3 text-[#9db8a6] cursor-pointer hover:text-white transition-colors">visibility</span>
+</label>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<label class="flex flex-col gap-2">
+<span class="text-white text-sm font-medium">Mật khẩu mới</span>
+<input class="w-full rounded-xl bg-background-dark border border-surface-border text-white px-4 py-3 focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all" type="password"/>
+</label>
+<label class="flex flex-col gap-2">
+<span class="text-white text-sm font-medium">Xác nhận mật khẩu</span>
+<input class="w-full rounded-xl bg-background-dark border border-surface-border text-white px-4 py-3 focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all" type="password"/>
+</label>
+</div>
+</div>
+</section>
+</div>
+<!-- Right Column: AI Preferences & Actions -->
+<div class="flex flex-col gap-8">
+<!-- Section: AI Preferences -->
+<section class="flex flex-col h-full">
+<div class="flex items-center justify-between mb-4">
+<h3 class="text-white text-lg font-bold flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">auto_awesome</span>
+                                AI Gợi ý
+                            </h3>
+<span class="text-xs text-primary bg-primary/10 px-2 py-1 rounded border border-primary/20">Beta</span>
+</div>
+<div class="bg-surface-dark rounded-xl p-6 border border-surface-border flex flex-col gap-6 flex-1">
+<p class="text-[#9db8a6] text-sm">Chọn sở thích ăn uống để AI đề xuất món ngon phù hợp nhất cho bạn.</p>
+<!-- Taste Profile -->
+<div class="flex flex-col gap-3">
+<span class="text-white text-sm font-medium">Khẩu vị</span>
+<div class="flex flex-wrap gap-2">
+<button class="px-3 py-1.5 rounded-lg bg-primary text-background-dark text-sm font-bold border border-primary">Đậm đà</button>
+<button class="px-3 py-1.5 rounded-lg bg-background-dark text-[#9db8a6] hover:text-white hover:border-[#9db8a6] text-sm font-medium border border-surface-border transition-all">Cay nóng</button>
+<button class="px-3 py-1.5 rounded-lg bg-background-dark text-[#9db8a6] hover:text-white hover:border-[#9db8a6] text-sm font-medium border border-surface-border transition-all">Ngọt</button>
+<button class="px-3 py-1.5 rounded-lg bg-primary text-background-dark text-sm font-bold border border-primary">Hải sản</button>
+</div>
+</div>
+<!-- Dietary Restrictions -->
+<div class="flex flex-col gap-3">
+<span class="text-white text-sm font-medium">Chế độ ăn</span>
+<div class="flex flex-wrap gap-2">
+<button class="px-3 py-1.5 rounded-lg bg-background-dark text-[#9db8a6] hover:text-white hover:border-[#9db8a6] text-sm font-medium border border-surface-border transition-all">Ăn chay</button>
+<button class="px-3 py-1.5 rounded-lg bg-background-dark text-[#9db8a6] hover:text-white hover:border-[#9db8a6] text-sm font-medium border border-surface-border transition-all">Không gluten</button>
+<button class="px-3 py-1.5 rounded-lg bg-background-dark text-[#9db8a6] hover:text-white hover:border-[#9db8a6] text-sm font-medium border border-surface-border transition-all">Halal</button>
+</div>
+</div>
+<div class="mt-auto pt-6 border-t border-surface-border">
+<label class="flex items-center justify-between cursor-pointer group">
+<div class="flex flex-col">
+<span class="text-white text-sm font-medium group-hover:text-primary transition-colors">Nhận thông báo ưu đãi</span>
+<span class="text-[#9db8a6] text-xs">Qua email &amp; tin nhắn</span>
+</div>
+<div class="relative">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-surface-border rounded-full peer peer-focus:ring-2 peer-focus:ring-primary peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</div>
+</label>
+</div>
+</div>
+</section>
+</div>
+</div>
+<!-- Sticky Action Bar -->
+<div class="sticky bottom-4 z-40 bg-background-dark/80 backdrop-blur-md border border-surface-border rounded-2xl p-4 flex items-center justify-between shadow-2xl mt-4">
+<span class="text-[#9db8a6] text-sm hidden sm:block pl-2">Lần cập nhật cuối: 10/10/2023</span>
+<div class="flex items-center gap-3 w-full sm:w-auto justify-end">
+<button class="px-6 py-2.5 rounded-xl text-white font-medium hover:bg-surface-border transition-colors text-sm">
+                        Hủy bỏ
+                    </button>
+<button class="px-8 py-2.5 rounded-xl bg-primary text-background-dark font-bold hover:bg-[#15c550] hover:shadow-[0_0_20px_rgba(25,230,94,0.4)] transition-all text-sm flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">save</span>
+                        Lưu thay đổi
+                    </button>
+</div>
+</div>
+</div>
+</main>
+</body></html>

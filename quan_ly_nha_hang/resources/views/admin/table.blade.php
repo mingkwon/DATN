@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html class="dark" lang="vi">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Bàn phục vụ - Chế độ xem lưới tối giản</title>
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@300;400;500;600;700;900&amp;family=Noto+Sans:wght@300;400;500;600;700&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#19e65e",
+                        "primary-dark": "#14b84b",
+                        "background-light": "#f6f8f6",
+                        "background-dark": "#112116",
+                        "surface-dark": "#18281e",
+                        "border-dark": "#2a3d31",
+                    },
+                    fontFamily: {
+                        "display": ["Work Sans", "sans-serif"],
+                        "body": ["Noto Sans", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.5rem",
+                        "lg": "1rem",
+                        "xl": "1.5rem",
+                        "2xl": "2rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+    <style>
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #2a3d31;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #3c5344;
+        }
+    </style>
+</head>
+
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-white font-display overflow-hidden">
+    <div class="flex h-screen w-full">
+        <div
+            class="w-[280px] h-full flex-col justify-between bg-surface-dark border-r border-border-dark hidden lg:flex flex-shrink-0 z-30">
+            <div class="flex flex-col gap-4 p-4">
+                <div class="flex items-center gap-3 px-2 py-2">
+                    <div class="bg-center bg-no-repeat bg-cover rounded-full size-10 bg-primary/20 flex items-center justify-center text-primary"
+                        data-alt="Restaurant logo placeholder">
+                        <span class="material-symbols-outlined text-2xl">restaurant_menu</span>
+                    </div>
+                    <div>
+                        <h1 class="text-white text-base font-bold leading-normal">DeliciousAI</h1>
+                        <p class="text-gray-400 text-xs font-normal">Restaurant Manager</p>
+                    </div>
+                </div>
+                <div class="h-px bg-border-dark my-1"></div>
+                <div class="flex flex-col gap-1">
+                    <a class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 transition-colors group"
+                        href="{{ url('home') }}">
+                        <span class="material-symbols-outlined text-gray-400 group-hover:text-white">dashboard</span>
+                        <p class="text-gray-300 group-hover:text-white text-sm font-medium">Tổng quan</p>
+                    </a>
+                    <a class="flex items-center gap-3 px-4 py-3 rounded-xl bg-primary/10 border border-primary/20"
+                        href="#">
+                        <span class="material-symbols-outlined text-primary fill-1">table_restaurant</span>
+                        <p class="text-primary text-sm font-bold">Bàn phục vụ</p>
+                    </a>
+                    <a class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 transition-colors group"
+                        href="{{ url('add_food') }}">
+                        <span class="material-symbols-outlined text-gray-400 group-hover:text-white">restaurant</span>
+                        <p class="text-gray-300 group-hover:text-white text-sm font-medium">Quản lý thực đơn</p>
+                    </a>
+                    <a class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 transition-colors group"
+                        href="{{ url('bookings') }}">
+                        <span class="material-symbols-outlined text-gray-400 group-hover:text-white">receipt_long</span>
+                        <p class="text-gray-300 group-hover:text-white text-sm font-medium">Danh sách đặt bàn</p>
+                    </a>
+                    <a class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 transition-colors group"
+                        href="#">
+                        <span class="material-symbols-outlined text-gray-400 group-hover:text-white">inventory_2</span>
+                        <p class="text-gray-300 group-hover:text-white text-sm font-medium">Kho hàng</p>
+                    </a>
+                    <a class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 transition-colors group"
+                        href="#">
+                        <span class="material-symbols-outlined text-gray-400 group-hover:text-white">settings</span>
+                        <p class="text-gray-300 group-hover:text-white text-sm font-medium">Cài đặt</p>
+                    </a>
+                </div>
+            </div>
+            <div class="p-4">
+                <form method="POST" action="{{ route('logout') }}">
+                    @csrf
+                    <button
+                        class="w-full flex items-center justify-center gap-3 px-4 py-3 rounded-xl bg-surface-dark border border-border-white hover:bg-red-500/10 hover:border-red-500/50 text-white-400 hover:text-red-500 transition-all group">
+                        <span class="material-symbols-outlined">logout</span>
+                        <span class="text-sm font-bold">Đăng xuất</span>
+                    </button>
+                </form>
+            </div>
+        </div>
+        <div class="flex-1 flex flex-col h-full overflow-hidden relative bg-background-light dark:bg-background-dark">
+            <div
+                class="flex-shrink-0 p-6 pb-2 border-b border-border-dark bg-surface-dark/50 backdrop-blur-md z-10 flex flex-col gap-6">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <button
+                            class="lg:hidden size-10 rounded-xl bg-surface-dark border border-border-dark flex items-center justify-center text-gray-400">
+                            <span class="material-symbols-outlined">menu</span>
+                        </button>
+                        <div>
+                            <h1 class="text-white text-2xl md:text-3xl font-black leading-tight tracking-tight">Bàn phục
+                                vụ</h1>
+                            <p class="text-gray-400 text-sm font-normal mt-1">Quản lý trạng thái bàn ăn trực tiếp</p>
+                        </div>
+                    </div>
+
+                    <!-- Phần bên phải: tất cả nằm sát nhau -->
+                    <div class="flex items-center gap-4 md:gap-6">
+                        <!-- Legend (ẩn trên mobile, hiện từ md trở lên) -->
+                        <div
+                            class="hidden md:flex items-center gap-4 bg-surface-dark border border-border-dark rounded-xl px-4 py-2">
+                            <div class="flex items-center gap-2">
+                                <span
+                                    class="size-3 rounded-full bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.3)]"></span>
+                                <span class="text-xs text-gray-300 font-medium">Trống</span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span
+                                    class="size-3 rounded-full bg-yellow-500 shadow-[0_0_10px_rgba(234,179,8,0.3)]"></span>
+                                <span class="text-xs text-gray-300 font-medium">Đang dùng</span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span
+                                    class="size-3 rounded-full bg-blue-500 shadow-[0_0_10px_rgba(59,130,246,0.3)]"></span>
+                                <span class="text-xs text-gray-300 font-medium">Đã đặt</span>
+                            </div>
+                        </div>
+
+                        <!-- Icon thông báo -->
+                        <div class="relative group">
+                            <button
+                                class="size-11 rounded-xl bg-surface-dark border border-border-dark flex items-center justify-center text-gray-400 hover:text-white hover:border-gray-500 transition-all">
+                                <span class="material-symbols-outlined">notifications</span>
+                                <span
+                                    class="absolute top-2.5 right-3 size-2 bg-red-500 rounded-full border-2 border-surface-dark"></span>
+                            </button>
+                        </div>
+
+                        <!-- Nút Thêm bàn mới -->
+                        <a class="flex items-center gap-2 bg-primary hover:bg-primary-dark active:scale-95 transition-all text-background-dark px-5 py-3 rounded-xl font-bold text-sm shadow-[0_0_20px_rgba(25,230,94,0.3)] cursor-pointer no-underline"
+                            href="#">
+                            <span class="material-symbols-outlined text-xl">add_circle</span>
+                            <span>Thêm bàn mới</span>
+                        </a>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2 overflow-x-auto no-scrollbar pb-2">
+                    <button
+                        class="flex items-center gap-2 px-5 py-2.5 rounded-lg bg-primary text-surface-dark font-bold text-sm shadow-[0_0_15px_rgba(25,230,94,0.2)] whitespace-nowrap transition-all">
+                        <span class="material-symbols-outlined text-lg">grid_view</span>
+                        Khu Tiêu chuẩn
+                    </button>
+                    <button
+                        class="flex items-center gap-2 px-5 py-2.5 rounded-lg bg-surface-dark border border-border-dark text-gray-400 hover:text-white hover:bg-white/5 font-medium text-sm whitespace-nowrap transition-all">
+                        <span class="material-symbols-outlined text-lg">meeting_room</span>
+                        Khu Riêng tư
+                    </button>
+                    <button
+                        class="flex items-center gap-2 px-5 py-2.5 rounded-lg bg-surface-dark border border-border-dark text-gray-400 hover:text-white hover:bg-white/5 font-medium text-sm whitespace-nowrap transition-all">
+                        <span class="material-symbols-outlined text-lg">window</span>
+                        Gần cửa sổ
+                    </button>
+                    <button
+                        class="flex items-center gap-2 px-5 py-2.5 rounded-lg bg-surface-dark border border-border-dark text-gray-400 hover:text-white hover:bg-white/5 font-medium text-sm whitespace-nowrap transition-all">
+                        <span class="material-symbols-outlined text-lg">deck</span>
+                        Ngoài trời
+                    </button>
+                </div>
+            </div>
+            <div class="flex-1 overflow-y-auto p-6 bg-background-dark">
+                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-6">
+                    <a class="group relative bg-surface-dark border border-border-dark hover:border-emerald-500/50 rounded-2xl p-5 flex flex-col items-center justify-center gap-4 cursor-pointer transition-all hover:shadow-lg hover:shadow-emerald-500/10 hover:-translate-y-1"
+                        href="#order-A01">
+                        <div class="flex items-center justify-between w-full">
+                            <span class="text-xs text-gray-500 font-medium bg-background-dark px-2 py-1 rounded">4
+                                ghế</span>
+                            <span class="size-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                        </div>
+                        <div
+                            class="size-20 rounded-full bg-emerald-500/10 text-emerald-500 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                            <span class="material-symbols-outlined text-4xl">table_restaurant</span>
+                        </div>
+                        <div class="text-center">
+                            <h3 class="text-white text-xl font-bold">Bàn A01</h3>
+                            <p class="text-emerald-500 text-sm font-bold uppercase tracking-wide mt-1">Trống</p>
+                        </div>
+                    </a>
+                    <a class="group relative bg-surface-dark border-2 border-primary rounded-2xl p-5 flex flex-col items-center justify-center gap-4 cursor-pointer shadow-[0_0_20px_rgba(25,230,94,0.1)] hover:-translate-y-1 transition-transform"
+                        href="#order-A02">
+                        <div
+                            class="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary text-surface-dark text-[10px] font-bold px-3 py-1 rounded-full uppercase shadow-lg">
+                            Đang chọn</div>
+                        <div class="flex items-center justify-between w-full">
+                            <span class="text-xs text-gray-500 font-medium bg-background-dark px-2 py-1 rounded">4
+                                ghế</span>
+                            <span
+                                class="flex items-center gap-1 text-[10px] text-yellow-500 bg-yellow-500/10 px-2 py-1 rounded border border-yellow-500/20 font-bold">
+                                <span class="material-symbols-outlined text-[12px]">schedule</span>
+                                00:45
+                            </span>
+                        </div>
+                        <div
+                            class="size-20 rounded-full bg-yellow-500/10 text-yellow-500 flex items-center justify-center relative">
+                            <span class="material-symbols-outlined text-4xl">restaurant</span>
+                            <span
+                                class="absolute bottom-0 right-0 size-6 bg-surface-dark rounded-full flex items-center justify-center border border-border-dark">
+                                <span class="material-symbols-outlined text-sm text-white">person</span>
+                            </span>
+                        </div>
+                        <div class="text-center">
+                            <h3 class="text-white text-xl font-bold">Bàn A02</h3>
+                            <p class="text-yellow-500 text-sm font-bold uppercase tracking-wide mt-1">Đang dùng</p>
+                        </div>
+                    </a>
+                    <a class="group relative bg-surface-dark border border-border-dark hover:border-yellow-500/50 rounded-2xl p-5 flex flex-col items-center justify-center gap-4 cursor-pointer transition-all hover:shadow-lg hover:shadow-yellow-500/10 hover:-translate-y-1"
+                        href="#order-A03">
+                        <div class="flex items-center justify-between w-full">
+                            <span class="text-xs text-gray-500 font-medium bg-background-dark px-2 py-1 rounded">6
+                                ghế</span>
+                            <span
+                                class="flex items-center gap-1 text-[10px] text-yellow-500 bg-yellow-500/10 px-2 py-1 rounded border border-yellow-500/20 font-bold">
+                                <span class="material-symbols-outlined text-[12px]">schedule</span>
+                                01:12
+                            </span>
+                        </div>
+                        <div
+                            class="size-20 rounded-full bg-yellow-500/10 text-yellow-500 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                            <span class="material-symbols-outlined text-4xl">restaurant</span>
+                        </div>
+                        <div class="text-center">
+                            <h3 class="text-white text-xl font-bold">Bàn A03</h3>
+                            <p class="text-yellow-500 text-sm font-bold uppercase tracking-wide mt-1">Đang dùng</p>
+                        </div>
+                    </a>
+                    <a class="group relative bg-surface-dark border border-border-dark hover:border-emerald-500/50 rounded-2xl p-5 flex flex-col items-center justify-center gap-4 cursor-pointer transition-all hover:shadow-lg hover:shadow-emerald-500/10 hover:-translate-y-1"
+                        href="#order-A04">
+                        <div class="flex items-center justify-between w-full">
+                            <span class="text-xs text-gray-500 font-medium bg-background-dark px-2 py-1 rounded">2
+                                ghế</span>
+                            <span class="size-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                        </div>
+                        <div
+                            class="size-20 rounded-full bg-emerald-500/10 text-emerald-500 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                            <span class="material-symbols-outlined text-4xl">table_restaurant</span>
+                        </div>
+                        <div class="text-center">
+                            <h3 class="text-white text-xl font-bold">Bàn A04</h3>
+                            <p class="text-emerald-500 text-sm font-bold uppercase tracking-wide mt-1">Trống</p>
+                        </div>
+                    </a>
+                    <a class="group relative bg-surface-dark border border-border-dark hover:border-blue-500/50 rounded-2xl p-5 flex flex-col items-center justify-center gap-4 cursor-pointer transition-all hover:shadow-lg hover:shadow-blue-500/10 hover:-translate-y-1"
+                        href="#order-aVIP1">
+                        <div class="flex items-center justify-between w-full">
+                            <span class="text-xs text-gray-500 font-medium bg-background-dark px-2 py-1 rounded">8
+                                ghế</span>
+                            <span
+                                class="flex items-center gap-1 text-[10px] text-blue-500 bg-blue-500/10 px-2 py-1 rounded border border-blue-500/20 font-bold">
+                                <span class="material-symbols-outlined text-[12px]">alarm</span>
+                                19:30
+                            </span>
+                        </div>
+                        <div
+                            class="size-20 rounded-full bg-blue-500/10 text-blue-500 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                            <span class="material-symbols-outlined text-4xl">event_seat</span>
+                        </div>
+                        <div class="text-center">
+                            <h3 class="text-white text-xl font-bold">Bàn aVIP1</h3>
+                            <p class="text-blue-500 text-sm font-bold uppercase tracking-wide mt-1">Đã đặt</p>
+                        </div>
+                    </a>
+                    <a class="group relative bg-surface-dark border border-border-dark hover:border-emerald-500/50 rounded-2xl p-5 flex flex-col items-center justify-center gap-4 cursor-pointer transition-all hover:shadow-lg hover:shadow-emerald-500/10 hover:-translate-y-1"
+                        href="#order-A05">
+                        <div class="flex items-center justify-between w-full">
+                            <span class="text-xs text-gray-500 font-medium bg-background-dark px-2 py-1 rounded">4
+                                ghế</span>
+                            <span class="size-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                        </div>
+                        <div
+                            class="size-20 rounded-full bg-emerald-500/10 text-emerald-500 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                            <span class="material-symbols-outlined text-4xl">table_restaurant</span>
+                        </div>
+                        <div class="text-center">
+                            <h3 class="text-white text-xl font-bold">Bàn A05</h3>
+                            <p class="text-emerald-500 text-sm font-bold uppercase tracking-wide mt-1">Trống</p>
+                        </div>
+                    </a>
+                    <a class="group relative bg-surface-dark border border-border-dark hover:border-emerald-500/50 rounded-2xl p-5 flex flex-col items-center justify-center gap-4 cursor-pointer transition-all hover:shadow-lg hover:shadow-emerald-500/10 hover:-translate-y-1"
+                        href="#order-A06">
+                        <div class="flex items-center justify-between w-full">
+                            <span class="text-xs text-gray-500 font-medium bg-background-dark px-2 py-1 rounded">4
+                                ghế</span>
+                            <span class="size-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                        </div>
+                        <div
+                            class="size-20 rounded-full bg-emerald-500/10 text-emerald-500 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                            <span class="material-symbols-outlined text-4xl">table_restaurant</span>
+                        </div>
+                        <div class="text-center">
+                            <h3 class="text-white text-xl font-bold">Bàn A06</h3>
+                            <p class="text-emerald-500 text-sm font-bold uppercase tracking-wide mt-1">Trống</p>
+                        </div>
+                    </a>
+                    <a class="group relative bg-surface-dark border border-border-dark hover:border-emerald-500/50 rounded-2xl p-5 flex flex-col items-center justify-center gap-4 cursor-pointer transition-all hover:shadow-lg hover:shadow-emerald-500/10 hover:-translate-y-1"
+                        href="#order-A07">
+                        <div class="flex items-center justify-between w-full">
+                            <span class="text-xs text-gray-500 font-medium bg-background-dark px-2 py-1 rounded">4
+                                ghế</span>
+                            <span class="size-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                        </div>
+                        <div
+                            class="size-20 rounded-full bg-emerald-500/10 text-emerald-500 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                            <span class="material-symbols-outlined text-4xl">table_restaurant</span>
+                        </div>
+                        <div class="text-center">
+                            <h3 class="text-white text-xl font-bold">Bàn A07</h3>
+                            <p class="text-emerald-500 text-sm font-bold uppercase tracking-wide mt-1">Trống</p>
+                        </div>
+                    </a>
+                    <a class="group relative bg-surface-dark border border-border-dark hover:border-blue-500/50 rounded-2xl p-5 flex flex-col items-center justify-center gap-4 cursor-pointer transition-all hover:shadow-lg hover:shadow-blue-500/10 hover:-translate-y-1"
+                        href="#order-aVIP2">
+                        <div class="flex items-center justify-between w-full">
+                            <span class="text-xs text-gray-500 font-medium bg-background-dark px-2 py-1 rounded">10
+                                ghế</span>
+                            <span
+                                class="flex items-center gap-1 text-[10px] text-blue-500 bg-blue-500/10 px-2 py-1 rounded border border-blue-500/20 font-bold">
+                                <span class="material-symbols-outlined text-[12px]">alarm</span>
+                                20:00
+                            </span>
+                        </div>
+                        <div
+                            class="size-20 rounded-full bg-blue-500/10 text-blue-500 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                            <span class="material-symbols-outlined text-4xl">event_seat</span>
+                        </div>
+                        <div class="text-center">
+                            <h3 class="text-white text-xl font-bold">Bàn aVIP2</h3>
+                            <p class="text-blue-500 text-sm font-bold uppercase tracking-wide mt-1">Đã đặt</p>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>
