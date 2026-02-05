@@ -64,6 +64,155 @@
 </head>
 
 <body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-white font-display overflow-hidden">
+    <div id="add-booking-modal"
+        class="fixed inset-0 z-50 hidden items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-fade-in">
+        <form action="{{ url('add_table') }}" method="POST">
+            @csrf
+            <div
+                class="w-full max-w-2xl bg-surface-dark border border-border-dark rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+                <div class="px-6 py-5 border-b border-border-dark flex items-center justify-between bg-white/5">
+                    <h3 class="text-xl font-bold text-white">Thêm bàn mới</h3>
+                    <button type="button" onclick="closeAddModal()"
+                        class="text-gray-400 hover:text-white transition-colors">
+                        <span class="material-symbols-outlined">close</span>
+                    </button>
+                </div>
+                <div class="p-6 overflow-y-auto">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="col-span-1">
+                            <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Tên
+                                bàn</label>
+                            <div class="relative">
+                                <span
+                                    class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-gray-500">person</span>
+                                <input name="ten_ban" id="customer-name" type="text" required minlength="2" class="w-full bg-background-dark border border-border-dark text-white text-sm rounded-xl py-3 pl-11 pr-4
+              focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all
+              placeholder:text-gray-600" placeholder="Nhập tên bàn" />
+
+                            </div>
+                        </div>
+                        <div class="col-span-1">
+                            <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">
+                                Loại bàn
+                            </label>
+                            <div class="relative">
+                                <span
+                                    class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-gray-500">
+                                    table_restaurant
+                                </span>
+
+                                <select name="loai_ban" required class="w-full bg-background-dark border border-border-dark text-white text-sm rounded-xl
+                   py-3 pl-11 pr-10
+                   focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary
+                   transition-all appearance-none cursor-pointer">
+
+                                    <option value="" disabled selected class="text-gray-600">
+                                        Chọn loại bàn
+                                    </option>
+                                    <option value="thuong">Bàn thường</option>
+                                    <option value="vip">Bàn VIP</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-span-1 md:col-span-2">
+                            <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">
+                                Vị trí bàn
+                            </label>
+
+                            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+                                <!-- TIÊU CHUẨN -->
+                                <label class="cursor-pointer relative group">
+                                    <input checked class="peer sr-only" name="vi_tri" type="radio" value="Tiêu chuẩn" />
+                                    <div class="p-4 rounded-xl bg-background-dark border border-border-dark
+                       peer-checked:border-primary peer-checked:bg-primary/5
+                       hover:border-gray-500 transition-all h-full">
+                                        <div class="mb-2 w-10 h-10 rounded-full bg-border-dark
+                           peer-checked:bg-primary peer-checked:text-background-dark
+                           flex items-center justify-center text-gray-300">
+                                            <span class="material-symbols-outlined">deck</span>
+                                        </div>
+                                        <p class="text-white font-bold text-sm">Tiêu chuẩn</p>
+                                        <p class="text-xs text-gray-400 mt-1">Khu vực chung</p>
+                                    </div>
+                                    <div class="absolute top-2 right-2 opacity-0 peer-checked:opacity-100 text-primary">
+                                        <span class="material-symbols-outlined text-lg">check_circle</span>
+                                    </div>
+                                </label>
+
+                                <!-- GẦN CỬA SỔ -->
+                                <label class="cursor-pointer relative group">
+                                    <input class="peer sr-only" name="vi_tri" type="radio" value="Gần cửa sổ" />
+                                    <div class="p-4 rounded-xl bg-background-dark border border-border-dark
+                       peer-checked:border-primary peer-checked:bg-primary/5
+                       hover:border-gray-500 transition-all h-full">
+                                        <div class="mb-2 w-10 h-10 rounded-full bg-border-dark
+                           peer-checked:bg-primary peer-checked:text-background-dark
+                           flex items-center justify-center text-gray-300">
+                                            <span class="material-symbols-outlined">window</span>
+                                        </div>
+                                        <p class="text-white font-bold text-sm">Gần cửa sổ</p>
+                                        <p class="text-xs text-gray-400 mt-1">Ngắm cảnh</p>
+                                    </div>
+                                    <div class="absolute top-2 right-2 opacity-0 peer-checked:opacity-100 text-primary">
+                                        <span class="material-symbols-outlined text-lg">check_circle</span>
+                                    </div>
+                                </label>
+
+                                <!-- RIÊNG TƯ -->
+                                <label class="cursor-pointer relative group">
+                                    <input class="peer sr-only" name="vi_tri" type="radio" value="Riêng tư" />
+                                    <div class="p-4 rounded-xl bg-background-dark border border-border-dark
+                       peer-checked:border-primary peer-checked:bg-primary/5
+                       hover:border-gray-500 transition-all h-full">
+                                        <div class="mb-2 w-10 h-10 rounded-full bg-border-dark
+                           peer-checked:bg-primary peer-checked:text-background-dark
+                           flex items-center justify-center text-gray-300">
+                                            <span class="material-symbols-outlined">privacy_tip</span>
+                                        </div>
+                                        <p class="text-white font-bold text-sm">Riêng tư</p>
+                                        <p class="text-xs text-gray-400 mt-1">Yên tĩnh</p>
+                                    </div>
+                                    <div class="absolute top-2 right-2 opacity-0 peer-checked:opacity-100 text-primary">
+                                        <span class="material-symbols-outlined text-lg">check_circle</span>
+                                    </div>
+                                </label>
+
+                                <!-- NGOÀI TRỜI -->
+                                <label class="cursor-pointer relative group">
+                                    <input class="peer sr-only" name="vi_tri" type="radio" value="Ngoài trời" />
+                                    <div class="p-4 rounded-xl bg-background-dark border border-border-dark
+                       peer-checked:border-primary peer-checked:bg-primary/5
+                       hover:border-gray-500 transition-all h-full">
+                                        <div class="mb-2 w-10 h-10 rounded-full bg-border-dark
+                           peer-checked:bg-primary peer-checked:text-background-dark
+                           flex items-center justify-center text-gray-300">
+                                            <span class="material-symbols-outlined">yard</span>
+                                        </div>
+                                        <p class="text-white font-bold text-sm">Ngoài trời</p>
+                                        <p class="text-xs text-gray-400 mt-1">Thoáng mát</p>
+                                    </div>
+                                    <div class="absolute top-2 right-2 opacity-0 peer-checked:opacity-100 text-primary">
+                                        <span class="material-symbols-outlined text-lg">check_circle</span>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="px-6 py-5 border-t border-border-dark bg-white/5 flex items-center justify-end gap-3">
+                    <button type="button" onclick="closeAddModal()"
+                        class="px-6 py-2.5 rounded-xl border border-border-dark text-gray-300 font-bold text-sm hover:bg-white/5 hover:text-white transition-all">
+                        Hủy
+                    </button>
+                    <button type="submit" id="confirm-button"
+                        class="px-6 py-2.5 rounded-xl bg-primary text-background-dark font-bold text-sm hover:bg-primary-dark shadow-[0_0_20px_rgba(25,230,94,0.3)] hover:shadow-[0_0_25px_rgba(25,230,94,0.4)] transition-all flex items-center gap-2">
+                        <span class="material-symbols-outlined text-lg">add</span>
+                        Thêm mới
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
     <div class="flex h-screen w-full">
         <div
             class="w-[280px] h-full flex-col justify-between bg-surface-dark border-r border-border-dark hidden lg:flex flex-shrink-0 z-30">
@@ -172,11 +321,12 @@
                         </div>
 
                         <!-- Nút Thêm bàn mới -->
-                        <a class="flex items-center gap-2 bg-primary hover:bg-primary-dark active:scale-95 transition-all text-background-dark px-5 py-3 rounded-xl font-bold text-sm shadow-[0_0_20px_rgba(25,230,94,0.3)] cursor-pointer no-underline"
+                        <button onclick="openAddModal()"
+                            class="flex items-center gap-2 bg-primary hover:bg-primary-dark active:scale-95 transition-all text-background-dark px-5 py-3 rounded-xl font-bold text-sm shadow-[0_0_20px_rgba(25,230,94,0.3)] cursor-pointer no-underline"
                             href="#">
                             <span class="material-symbols-outlined text-xl">add_circle</span>
                             <span>Thêm bàn mới</span>
-                        </a>
+                        </button>
                     </div>
                 </div>
                 <div class="flex items-center gap-2 overflow-x-auto no-scrollbar pb-2">
@@ -375,6 +525,31 @@
             </div>
         </div>
     </div>
+    <script>
+        function openDeleteModal(id) {
+            const modal = document.getElementById('delete-modal');
+            const deleteBtn = document.getElementById('confirm-delete-btn');
+
+            deleteBtn.href = `/delete_booking/${id}`;
+            modal.classList.remove('hidden');
+        }
+        function openAddModal() {
+            document.getElementById('add-booking-modal').classList.remove('hidden');
+            document.getElementById('add-booking-modal').classList.add('flex');
+        }
+
+        function closeAddModal() {
+            document.getElementById('add-booking-modal').classList.add('hidden');
+            document.getElementById('add-booking-modal').classList.remove('flex');
+        }
+        document.querySelector('#add-booking-modal form')
+            .addEventListener('submit', function (e) {
+                const name = document.getElementById('customer-name').value.trim();
+                if (!name) {
+                    e.preventDefault();
+                }
+            });
+    </script>
 
 </body>
 

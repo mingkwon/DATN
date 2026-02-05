@@ -30,6 +30,8 @@ Route::get('/tables', [AdminController::class, 'tables']);
 
 Route::post('/add_table', [AdminController::class, 'add_table']);
 
+Route::get('/table_order', [AdminController::class, 'table_order']);
+
 Route::get('/add_food', [AdminController::class, 'add_food']);
 
 Route::post('/upload_food', [AdminController::class, 'upload_food']);

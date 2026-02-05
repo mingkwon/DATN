@@ -88,7 +88,16 @@ class AdminController extends Controller
     {
         $query = Book::query();
 
-        // Lọc theo khoảng thời gian (period)
+        // Lọc theo search (tên hoặc SĐT)
+        if ($search = $request->query('search')) {
+            $search = trim($search);
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                    ->orWhere('phone', 'like', "%{$search}%");
+            });
+        }
+
+        // Lọc ngày
         if ($period = $request->query('period')) {
             $today = Carbon::today();
 
@@ -102,34 +111,59 @@ class AdminController extends Controller
                     break;
 
                 case 'this-week':
-                    $query->whereBetween('date', [
-                        $today->startOfWeek(Carbon::MONDAY), // Tuần bắt đầu từ Thứ 2 (tùy chỉnh nếu cần Chủ Nhật)
-                        $today->endOfWeek(Carbon::SUNDAY),
-                    ]);
+                    $startOfWeek = $today->copy()->startOfWeek(Carbon::MONDAY);
+                    $endOfWeek = $today->copy()->endOfWeek(Carbon::SUNDAY);
+                    \Log::info("This week filter: from {$startOfWeek->format('Y-m-d')} to {$endOfWeek->format('Y-m-d')}");
+                    $query->whereBetween('date', [$startOfWeek, $endOfWeek]);
                     break;
 
                 case 'this-month':
-                    $query->whereBetween('date', [
-                        $today->startOfMonth(),
-                        $today->endOfMonth(),
-                    ]);
-                    break;
-
-                default:
-                    // Nếu period không hợp lệ → bỏ qua
+                    $startOfMonth = $today->copy()->startOfMonth();
+                    $endOfMonth = $today->copy()->endOfMonth();
+                    \Log::info("This month filter: from {$startOfMonth->format('Y-m-d')} to {$endOfMonth->format('Y-m-d')}");
+                    $query->whereBetween('date', [$startOfMonth, $endOfMonth]);
                     break;
             }
         }
 
-        // Lọc theo trạng thái (status)
-        if ($status = $request->query('status')) {
-            $query->where('status', $status);
+        // Lọc theo trạng thái (hỗ trợ nhiều trạng thái cùng lúc)
+        if ($statuses = $request->query('status')) {
+            // $statuses có thể là string (1 trạng thái) hoặc array (nhiều trạng thái)
+            $statuses = is_array($statuses) ? $statuses : [$statuses];
+
+            $now = Carbon::now();
+
+            $query->where(function ($q) use ($statuses, $now) {
+                foreach ($statuses as $filterStatus) {
+                    $q->orWhere(function ($sub) use ($filterStatus, $now) {
+                        if ($filterStatus === 'Chờ xác nhận') {
+                            $sub->where('status', 'Chờ xác nhận')
+                                ->whereRaw("CONCAT(date, ' ', time) >= ?", [$now->toDateTimeString()]);
+                        } elseif ($filterStatus === 'Đã xác nhận') {
+                            $sub->where('status', 'Đã xác nhận')
+                                ->whereRaw("CONCAT(date, ' ', time) > ?", [$now->toDateTimeString()]);
+                        } elseif ($filterStatus === 'Chờ khách') {
+                            $sub->where('status', 'Đã xác nhận')
+                                ->whereRaw("CONCAT(`date`, ' ', `time`) >= ? - INTERVAL 15 MINUTE", [$now->toDateTimeString()])
+                                ->whereRaw("CONCAT(`date`, ' ', `time`) <= ?", [$now->toDateTimeString()]);
+                        } elseif ($filterStatus === 'Đã quá hạn') {
+                            $sub->where(function ($inner) use ($now) {
+                                $inner->where('status', 'Chờ xác nhận')
+                                    ->whereRaw("CONCAT(date, ' ', time) < ?", [$now->toDateTimeString()]);
+                            })->orWhere(function ($inner) use ($now) {
+                                $inner->where('status', 'Đã xác nhận')
+                                    ->whereRaw("CONCAT(date, ' ', time) < ?", [$now->subMinutes(15)->toDateTimeString()]);
+                            });
+                        } elseif ($filterStatus === 'Đã hủy') {
+                            $sub->where('status', 'Đã hủy');
+                        }
+                    });
+                }
+            });
         }
 
-        // Sắp xếp mặc định: mới nhất trước (hoặc theo ngày đặt nếu muốn)
-        $query->orderBy('created_at', 'desc'); // hoặc orderBy('date', 'asc')->orderBy('time', 'asc');
+        $query->orderBy('created_at', 'desc');
 
-        // Phân trang + giữ nguyên các query params (period, status, page,...)
         $data = $query->paginate(10)->withQueryString();
 
         return view('admin.booking', compact('data'));
@@ -169,8 +203,13 @@ class AdminController extends Controller
         $data->ten_ban = $request->ten_ban;
         $data->loai_ban = $request->loai_ban;
         $data->vi_tri = $request->vi_tri;
-        $data->trang_thai = $request->trang_thai;
+        $data->trang_thai = $request->trang_thai ?? 'Trống';
         $data->save();
         return redirect()->back();
+    }
+
+    public function table_order()
+    {
+        return view('admin.table_order');
     }
 }

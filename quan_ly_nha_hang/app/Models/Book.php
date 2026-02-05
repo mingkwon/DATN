@@ -19,6 +19,7 @@ class Book extends Model
         'table',
         'note',
         'status'
+        // ,'table_id'
     ];
 
     protected $appends = ['display_status'];
@@ -28,6 +29,9 @@ class Book extends Model
         $now = Carbon::now();
         $bookingTime = Carbon::parse($this->date . ' ' . $this->time);
         $expireTime = $bookingTime->copy()->addMinutes(15);
+
+        // Debug
+        \Log::info("Booking ID {$this->id}: now={$now}, bookingTime={$bookingTime}, expire={$expireTime}");
 
         // ĐÃ XÁC NHẬN
         if ($this->status === 'Đã xác nhận') {

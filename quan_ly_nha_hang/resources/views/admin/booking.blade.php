@@ -66,13 +66,13 @@
 <body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-white font-display overflow-hidden">
     <div id="add-booking-modal"
         class="fixed inset-0 z-50 hidden items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-fade-in">
-        <form action="{{ url('book_table') }}" method="POST">
+        <form id="booking-form" action="{{ url('book_table') }}" method="POST">
             @csrf
             <div
                 class="w-full max-w-2xl bg-surface-dark border border-border-dark rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
                 <div class="px-6 py-5 border-b border-border-dark flex items-center justify-between bg-white/5">
                     <h3 class="text-xl font-bold text-white">Thêm đặt bàn mới</h3>
-                    <button type="button" onclick="closeAddModal()"
+                    <button type="button" onclick="closeAddModal(); resetBookingForm();"
                         class="text-gray-400 hover:text-white transition-colors">
                         <span class="material-symbols-outlined">close</span>
                     </button>
@@ -235,7 +235,7 @@
                     </div>
                 </div>
                 <div class="px-6 py-5 border-t border-border-dark bg-white/5 flex items-center justify-end gap-3">
-                    <button type="button" onclick="closeAddModal()"
+                    <button type="button" onclick="closeAddModal(); resetBookingForm();"
                         class="px-6 py-2.5 rounded-xl border border-border-dark text-gray-300 font-bold text-sm hover:bg-white/5 hover:text-white transition-all">
                         Hủy
                     </button>
@@ -247,6 +247,125 @@
                 </div>
             </div>
         </form>
+    </div>
+    <div id="assign-table"
+        class="fixed inset-0 z-50 hidden items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-fade-in">
+        <div class="absolute inset-0 bg-background-dark/80 backdrop-blur-md"></div>
+        <div
+            class="relative w-full max-w-4xl bg-surface-dark border border-border-dark rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+            <div class="p-6 border-b border-border-dark flex items-center justify-between bg-white/5">
+                <div>
+                    <h2 class="text-xl font-bold text-white flex items-center gap-2">
+                        <span class="material-symbols-outlined text-primary">table_bar</span>
+                        Xác nhận &amp; Gán bàn
+                    </h2>
+                    <p class="text-gray-400 text-sm mt-1">Vui lòng chọn bàn trống phù hợp với yêu cầu của khách.
+                    </p>
+                </div>
+                <button type="button" onclick="closeAssignModal();"
+                    class="size-10 rounded-full hover:bg-white/10 flex items-center justify-center text-gray-400 transition-colors">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </div>
+            <div class="flex-1 overflow-y-auto p-6 flex flex-col gap-8">
+                <div
+                    class="grid grid-cols-1 md:grid-cols-3 gap-4 p-4 bg-background-dark/50 border border-border-dark rounded-2xl">
+                    <div class="flex flex-col gap-1">
+                        <span class="text-xs text-gray-500 uppercase font-bold tracking-wider">Khách hàng</span>
+                        <div class="flex items-center gap-2">
+                            <div
+                                class="size-8 rounded-full bg-purple-500 flex items-center justify-center text-white text-xs font-bold">
+                                L</div>
+                            <span class="text-sm font-semibold text-white">Lê Thị Lan</span>
+                        </div>
+                    </div>
+                    <div class="flex flex-col gap-1">
+                        <span class="text-xs text-gray-500 uppercase font-bold tracking-wider">Thời gian
+                            đặt</span>
+                        <div class="flex items-center gap-2 text-white">
+                            <span class="material-symbols-outlined text-gray-500 text-lg">schedule</span>
+                            <span class="text-sm font-semibold">19:00 - Hôm nay</span>
+                        </div>
+                    </div>
+                    <div class="flex flex-col gap-1">
+                        <span class="text-xs text-gray-500 uppercase font-bold tracking-wider">Vị trí mong
+                            muốn</span>
+                        <div class="flex items-center gap-2">
+                            <span
+                                class="px-2 py-0.5 rounded-md bg-yellow-500/10 border border-yellow-500/30 text-[10px] text-yellow-500 font-bold uppercase">Gần
+                                cửa sổ</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex flex-col gap-6">
+                    <div class="flex items-center gap-2 border-b border-border-dark pb-px overflow-x-auto">
+                        <button
+                            class="px-4 py-2 text-sm font-bold text-primary border-b-2 border-primary whitespace-nowrap">Tiêu
+                            chuẩn</button>
+                        <button
+                            class="px-4 py-2 text-sm font-medium text-gray-500 hover:text-white transition-colors whitespace-nowrap">Riêng
+                            tư</button>
+                        <button
+                            class="px-4 py-2 text-sm font-medium text-gray-500 hover:text-white transition-colors whitespace-nowrap flex items-center gap-1">
+                            Gần cửa sổ
+                            <span class="size-1.5 rounded-full bg-primary"></span>
+                        </button>
+                        <button
+                            class="px-4 py-2 text-sm font-medium text-gray-500 hover:text-white transition-colors whitespace-nowrap">Ngoài
+                            trời</button>
+                    </div>
+                    <div class="flex items-center gap-6 text-[10px] font-bold uppercase tracking-widest text-gray-500">
+                        <div class="flex items-center gap-2"><span
+                                class="size-3 rounded-sm bg-primary/20 border border-primary/50"></span> Trống
+                        </div>
+                        <div class="flex items-center gap-2"><span
+                                class="size-3 rounded-sm bg-yellow-500/20 border border-yellow-500/50"></span>
+                            Đang
+                            dùng</div>
+                        <div class="flex items-center gap-2"><span
+                                class="size-3 rounded-sm bg-blue-500/20 border border-blue-500/50"></span> Đã
+                            đặt
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                        <div
+                            class="group cursor-pointer relative flex flex-col items-center justify-center gap-3 p-5 rounded-2xl bg-primary/5 border border-primary/20 hover:border-primary hover:bg-primary/10 transition-all">
+                            <span class="material-symbols-outlined text-primary text-3xl">table_bar</span>
+                            <div class="text-center">
+                                <p class="text-white text-sm font-bold">Bàn 01</p>
+                                <p class="text-primary text-[10px] font-medium">4 Chỗ</p>
+                            </div>
+                        </div>
+                        <div
+                            class="opacity-60 cursor-not-allowed flex flex-col items-center justify-center gap-3 p-5 rounded-2xl bg-yellow-500/5 border border-yellow-500/20">
+                            <span class="material-symbols-outlined text-yellow-500 text-3xl">group</span>
+                            <div class="text-center">
+                                <p class="text-white text-sm font-bold">Bàn 03</p>
+                                <p class="text-yellow-500 text-[10px] font-medium">Đang dùng</p>
+                            </div>
+                        </div>
+                        <div
+                            class="opacity-60 cursor-not-allowed flex flex-col items-center justify-center gap-3 p-5 rounded-2xl bg-blue-500/5 border border-blue-500/20">
+                            <span class="material-symbols-outlined text-blue-500 text-3xl">event_seat</span>
+                            <div class="text-center">
+                                <p class="text-white text-sm font-bold">Bàn 04</p>
+                                <p class="text-blue-500 text-[10px] font-medium">Đã đặt</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="p-6 border-t border-border-dark bg-background-dark/80 flex items-center justify-end gap-3">
+                <button type="button" onclick="closeAssignModal();"
+                    class="px-6 py-2.5 rounded-xl border border-border-dark text-gray-300 font-bold text-sm hover:bg-white/5 transition-colors">
+                    Hủy
+                </button>
+                <button id="confirm-assign-btn"
+                    class="px-8 py-2.5 rounded-xl bg-primary hover:bg-primary-dark text-background-dark font-black text-sm shadow-[0_0_20px_rgba(25,230,94,0.3)] transition-all active:scale-95">
+                    Xác nhận gán bàn
+                </button>
+            </div>
+        </div>
     </div>
     <div aria-labelledby="modal-title" aria-modal="true" class="fixed inset-0 z-50 hidden" id="delete-modal"
         role="dialog">
@@ -384,18 +503,61 @@
                         <div class="relative w-full md:w-96 group">
                             <span
                                 class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-primary transition-colors">search</span>
-                            <input
-                                class="w-full bg-surface-dark border border-border-dark text-white text-sm rounded-xl py-3 pl-10 pr-4 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all placeholder:text-gray-600"
+                            <input id="search-input" name="search" value="{{ request('search') }}"
+                                class="w-full bg-surface-dark border border-border-dark text-white text-sm rounded-xl py-3 pl-10 pr-12 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all placeholder:text-gray-600"
                                 placeholder="Tìm tên khách hàng, SĐT..." type="text" />
+                            @if(request('search'))
+                                <button type="button" onclick="clearSearch()"
+                                    class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white transition-colors">
+                                    <span class="material-symbols-outlined">close</span>
+                                </button>
+                            @endif
                         </div>
+
+                        <script>
+                            const searchInput = document.getElementById('search-input');
+
+                            searchInput.addEventListener('keypress', function (e) {
+                                if (e.key === 'Enter') {
+                                    e.preventDefault();
+                                    applySearch();
+                                }
+                            });
+
+                            // Optional: Tìm khi blur (mất focus) - nếu muốn tự động tìm khi gõ xong
+                            // searchInput.addEventListener('blur', applySearch);
+
+                            function applySearch() {
+                                const url = new URL(window.location);
+                                const searchValue = searchInput.value.trim();
+
+                                if (searchValue) {
+                                    url.searchParams.set('search', searchValue);
+                                } else {
+                                    url.searchParams.delete('search');
+                                }
+
+                                // Reset về trang 1 khi search mới
+                                url.searchParams.delete('page');
+
+                                window.location = url;
+                            }
+
+                            function clearSearch() {
+                                const url = new URL(window.location);
+                                url.searchParams.delete('search');
+                                url.searchParams.delete('page');
+                                window.location = url;
+                            }
+                        </script>
                         <div>
                             @if(session()->has('message'))
                                 <div id="session-alert"
                                     class="flex items-center gap-2 px-4 py-3 rounded-lg
-                                                                                                                            bg-primary/10 border border-primary/25
-                                                                                                                            text-primary text-xs font-semibold
-                                                                                                                            shadow-md shadow-primary/15
-                                                                                                                            animate-fade-in relative">
+                                                                                                                                                                                                            bg-primary/10 border border-primary/25
+                                                                                                                                                                                                            text-primary text-xs font-semibold
+                                                                                                                                                                                                            shadow-md shadow-primary/15
+                                                                                                                                                                                                            animate-fade-in relative">
 
                                     <span class="material-symbols-outlined text-primary text-base mt-0.5">
                                         check_circle
@@ -408,10 +570,10 @@
                                     <!-- Close button -->
                                     <button type="button" aria-label="Đóng thông báo" onclick="closeSessionAlert()"
                                         class="ml-1 flex items-center justify-center
-                                                                                                                                   w-7 h-7 rounded-full
-                                                                                                                                   text-primary/70 hover:text-primary
-                                                                                                                                   hover:bg-primary/20
-                                                                                                                                   transition">
+                                                                                                                                                                                                                   w-7 h-7 rounded-full
+                                                                                                                                                                                                                   text-primary/70 hover:text-primary
+                                                                                                                                                                                                                   hover:bg-primary/20
+                                                                                                                                                                                                                   transition">
                                         <span class="material-symbols-outlined text-sm">close</span>
                                     </button>
                                 </div>
@@ -459,17 +621,14 @@
             focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary cursor-pointer
         ">
                                     <option value="">Tất cả trạng thái</option>
-                                    <option value="Chờ xác nhận" {{ request('status') === 'Chờ xác nhận' ? 'selected' : '' }}>Chờ
-                                        xác nhận</option>
-                                    <option value="Đã xác nhận" {{ request('status') === 'Đã xác nhận' ? 'selected' : '' }}>Đã
-                                        xác nhận</option>
+                                    <option value="Chờ xác nhận" {{ request('status') === 'Chờ xác nhận' ? 'selected' : '' }}>Chờ xác nhận</option>
+                                    <option value="Đã xác nhận" {{ request('status') === 'Đã xác nhận' ? 'selected' : '' }}>Đã xác nhận</option>
                                     <option value="Chờ khách" {{ request('status') === 'Chờ khách' ? 'selected' : '' }}>
                                         Chờ khách</option>
                                     <option value="Đã quá hạn" {{ request('status') === 'Đã quá hạn' ? 'selected' : '' }}>
                                         Đã quá hạn</option>
-                                    <option value="Đã hủy" {{ request('status') === 'Đã hủy' ? 'selected' : '' }}>Đã
-                                        hủy</option>
-                                    <!-- Thêm các trạng thái khác nếu có, ví dụ: overdue, waiting, etc. -->
+                                    <option value="Đã hủy" {{ request('status') === 'Đã hủy' ? 'selected' : '' }}>Đã hủy
+                                    </option>
                                 </select>
                                 <span
                                     class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none">
@@ -627,11 +786,11 @@
 
                                                         {{-- XÁC NHẬN (chỉ khi chờ xác nhận) --}}
                                                         @if($booking->status === 'Chờ xác nhận')
-                                                            <a href="{{ url('approve_book', $booking->id) }}"
+                                                            <button onclick="openAssignModal({{ $booking->id }})"
                                                                 class="p-2 rounded-lg text-primary hover:bg-primary/10 transition-all"
                                                                 title="Xác nhận">
                                                                 <span class="material-symbols-outlined text-lg">check</span>
-                                                            </a>
+                                                            </button>
                                                         @endif
 
                                                         {{-- HỦY --}}
@@ -735,6 +894,7 @@
         </div>
     </div>
     <script>
+        // Thêm đặt bàn mới 
         function openDeleteModal(id) {
             const modal = document.getElementById('delete-modal');
             const deleteBtn = document.getElementById('confirm-delete-btn');
@@ -758,6 +918,34 @@
                     e.preventDefault();
                 }
             });
+
+        // Gán bàn
+        let currentBookingId = null;
+
+        function openAssignModal(bookingId) {
+            currentBookingId = bookingId;  // Lưu ID booking để dùng sau
+            document.getElementById('assign-table').classList.remove('hidden');
+            document.getElementById('assign-table').classList.add('flex');
+
+            // Optional: Có thể load thêm thông tin booking vào modal nếu cần (dùng AJAX sau này)
+            console.log('Mở modal gán bàn cho booking ID:', bookingId);
+        }
+
+        function closeAssignModal() {
+            document.getElementById('assign-table').classList.add('hidden');
+            document.getElementById('assign-table').classList.remove('flex');
+            currentBookingId = null; // Reset
+        }
+
+        // Xử lý click nút "Xác nhận gán bàn" trong modal
+        document.getElementById('confirm-assign-btn').addEventListener('click', function () {
+            if (currentBookingId) {
+                // Chuyển hướng đến route approve_book
+                window.location.href = `/approve_book/${currentBookingId}`;
+            } else {
+                alert('Không tìm thấy ID booking!');
+            }
+        });
     </script>
     <!-- Nút thêm mới -->
     <script>
@@ -804,11 +992,23 @@
         dateInput.addEventListener('change', toggleSubmitButton);
         timeInput.addEventListener('change', toggleSubmitButton);
 
-        // Disable ngay khi mở modal
-        document.getElementById('add-booking-modal')
-            .addEventListener('transitionend', toggleSubmitButton);
-        const phoneInput = document.getElementById('phone-number');
+        // Reset modal 
+        const bookingForm = document.getElementById('booking-form');
+        const modal = document.getElementById('add-booking-modal');
 
+        function resetBookingForm() {
+            bookingForm.reset();
+
+            // reset trạng thái nút submit (nếu có style disable)
+            confirmBtn.disabled = false;
+            confirmBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+        }
+
+        // Disable ngay khi mở modal
+        // document.getElementById('add-booking-modal')
+        //     .addEventListener('transitionend', toggleSubmitButton);
+
+        const phoneInput = document.getElementById('phone-number');
         phoneInput.addEventListener('input', function () {
             // Chỉ giữ lại số
             this.value = this.value.replace(/\D/g, '');
