@@ -169,6 +169,27 @@ class AdminController extends Controller
         return view('admin.booking', compact('data'));
     }
 
+    public function getBookingInfo($id)
+    {
+        $booking = Book::findOrFail($id);
+        return response()->json([
+            'name' => $booking->name,
+            'phone' => $booking->phone,
+            'time' => $booking->time,
+            'date' => \Carbon\Carbon::parse($booking->date)->format('d/m/Y'),
+            'table_type' => $booking->table,
+        ]);
+    }
+
+    public function getAvailableTables($date, $time)
+    {
+        // Lấy danh sách bàn theo type và trạng thái (bạn có thể lọc thêm theo thời gian đặt bàn)
+        $tables = Table::where('vi_tri', request('vi_tri', 'Tiêu chuẩn')) // mặc định hoặc theo param
+            ->get(['id', 'ten_ban', 'trang_thai', 'vi_tri']);
+
+        return response()->json($tables);
+    }
+
     public function delete_booking($id)
     {
         $data = Book::find($id);
@@ -176,12 +197,74 @@ class AdminController extends Controller
         return redirect()->back();
     }
 
-    public function approve_book($id)
+    public function approve_book($id, Request $request)
     {
-        $booking = Book::find($id);
-        $booking->status = 'Đã xác nhận';
-        $booking->save();
-        return redirect()->back();
+        $booking = Book::findOrFail($id);
+
+        $tableId = $request->input('table_id');
+
+        if (!$tableId) {
+            return redirect()->back()->with('error', 'Vui lòng chọn một bàn!');
+        }
+
+        $table = Table::find($tableId);
+        if (!$table) {
+            return redirect()->back()->with('error', 'Bàn không tồn tại!');
+        }
+
+        if ($table->trang_thai !== 'Trống') {
+            return redirect()->back()->with('error', 'Bàn đã được đặt hoặc đang dùng!');
+        }
+
+        // Chỉ gán table_id và xác nhận booking
+        $booking->update([
+            'table_id' => $tableId,
+            'status' => 'Đã xác nhận',
+        ]);
+
+        return redirect()->route('bookings')->with('success', 'Đã xác nhận và gán bàn thành công! Trạng thái bàn sẽ tự động cập nhật trước 3 tiếng.');
+    }
+
+    private function updateTableStatus(Table $table)
+    {
+        $now = Carbon::now();
+
+        // Tìm booking sớm nhất trong tương lai cho bàn này
+        $upcomingBooking = Book::where('table_id', $table->id)
+            ->where('status', 'Đã xác nhận')
+            ->whereRaw("CONCAT(date, ' ', time) > ?", [$now->toDateTimeString()])
+            ->orderBy('date', 'asc')
+            ->orderBy('time', 'asc')
+            ->first();
+
+        if ($upcomingBooking) {
+            $bookingDateTime = Carbon::parse($upcomingBooking->date . ' ' . $upcomingBooking->time);
+
+            // Nếu còn ≤ 3 tiếng (giờ hiện tại ≥ giờ đặt - 3h)
+            if ($now->diffInHours($bookingDateTime, false) <= 3) {
+                if ($table->trang_thai !== 'Đã đặt') {
+                    $table->trang_thai = 'Đã đặt';
+                    $table->saveQuietly(); // Lưu mà không trigger event
+                }
+            }
+        }
+    }
+
+    public function getTablesByType($type)
+    {
+        $tables = Table::where('vi_tri', $type)->get();
+
+        foreach ($tables as $table) {
+            $this->updateTableStatus($table);
+        }
+
+        return response()->json($tables->map(function ($table) {
+            return [
+                'id' => $table->id,
+                'name' => $table->ten_ban,
+                'status' => $table->trang_thai,
+            ];
+        }));
     }
 
     public function reject_book($id)
@@ -194,7 +277,20 @@ class AdminController extends Controller
 
     public function tables()
     {
-        return view('admin.table');
+        $tables = Table::with([
+            'latestBooking' => function ($q) {
+                $q->where('status', 'Đã xác nhận')
+                    ->whereRaw("CONCAT(date, ' ', time) > ?", [now()->toDateTimeString()])
+                    ->orderBy('date')->orderBy('time')->limit(1);
+            }
+        ])->get();
+
+        // Cập nhật trạng thái bàn (nếu bạn đã có hàm updateTableStatus)
+        foreach ($tables as $table) {
+            $this->updateTableStatus($table);
+        }
+
+        return view('admin.table', compact('tables'));
     }
 
     public function add_table(Request $request)

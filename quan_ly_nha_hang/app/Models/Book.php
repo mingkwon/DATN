@@ -18,8 +18,8 @@ class Book extends Model
         'guest',
         'table',
         'note',
-        'status'
-        // ,'table_id'
+        'status',
+        'table_id'
     ];
 
     protected $appends = ['display_status'];

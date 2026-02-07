@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string('table');
             $table->string('note');
             $table->string('status');
+            $table->foreignId('table_id')->nullable()->constrained('tables')->onDelete('set null');
             $table->timestamps();
         });
     }

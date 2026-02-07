@@ -136,7 +136,7 @@
                             <div class="relative">
                                 <span
                                     class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-gray-500">schedule</span>
-                                <input name="time" id="booking-time" type="time" required min="08:00" max="22:00" class="w-full bg-background-dark border border-border-dark text-white text-sm rounded-xl py-3 pl-11 pr-4
+                                <input name="time" id="booking-time" type="time" required  class="w-full bg-background-dark border border-border-dark text-white text-sm rounded-xl py-3 pl-11 pr-4
               focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all
               [color-scheme:dark]" />
 
@@ -250,68 +250,68 @@
     </div>
     <div id="assign-table"
         class="fixed inset-0 z-50 hidden items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-fade-in">
-        <div class="absolute inset-0 bg-background-dark/80 backdrop-blur-md"></div>
         <div
             class="relative w-full max-w-4xl bg-surface-dark border border-border-dark rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
             <div class="p-6 border-b border-border-dark flex items-center justify-between bg-white/5">
                 <div>
                     <h2 class="text-xl font-bold text-white flex items-center gap-2">
                         <span class="material-symbols-outlined text-primary">table_bar</span>
-                        Xác nhận &amp; Gán bàn
+                        Xác nhận & Gán bàn
                     </h2>
-                    <p class="text-gray-400 text-sm mt-1">Vui lòng chọn bàn trống phù hợp với yêu cầu của khách.
-                    </p>
+                    <p class="text-gray-400 text-sm mt-1">Vui lòng chọn bàn trống phù hợp với yêu cầu của khách.</p>
                 </div>
-                <button type="button" onclick="closeAssignModal();"
+                <button type="button" onclick="closeAssignModal()"
                     class="size-10 rounded-full hover:bg-white/10 flex items-center justify-center text-gray-400 transition-colors">
                     <span class="material-symbols-outlined">close</span>
                 </button>
             </div>
+
             <div class="flex-1 overflow-y-auto p-6 flex flex-col gap-8">
+                <!-- Thông tin khách hàng - fill động bằng JS -->
                 <div
-                    class="grid grid-cols-1 md:grid-cols-3 gap-4 p-4 bg-background-dark/50 border border-border-dark rounded-2xl">
+                    class="grid grid-cols-1 md:grid-cols-4 gap-4 p-4 bg-background-dark/50 border border-border-dark rounded-2xl">
                     <div class="flex flex-col gap-1">
                         <span class="text-xs text-gray-500 uppercase font-bold tracking-wider">Khách hàng</span>
                         <div class="flex items-center gap-2">
-                            <div
-                                class="size-8 rounded-full bg-purple-500 flex items-center justify-center text-white text-xs font-bold">
-                                L</div>
-                            <span class="text-sm font-semibold text-white">Lê Thị Lan</span>
+                            <span id="modal-name" class="text-sm font-semibold text-white">Đang tải...</span>
                         </div>
                     </div>
                     <div class="flex flex-col gap-1">
-                        <span class="text-xs text-gray-500 uppercase font-bold tracking-wider">Thời gian
-                            đặt</span>
-                        <div class="flex items-center gap-2 text-white">
-                            <span class="material-symbols-outlined text-gray-500 text-lg">schedule</span>
-                            <span class="text-sm font-semibold">19:00 - Hôm nay</span>
-                        </div>
-                    </div>
-                    <div class="flex flex-col gap-1">
-                        <span class="text-xs text-gray-500 uppercase font-bold tracking-wider">Vị trí mong
-                            muốn</span>
+                        <span class="text-xs text-gray-500 uppercase font-bold tracking-wider">Số điện thoại</span>
                         <div class="flex items-center gap-2">
-                            <span
-                                class="px-2 py-0.5 rounded-md bg-yellow-500/10 border border-yellow-500/30 text-[10px] text-yellow-500 font-bold uppercase">Gần
-                                cửa sổ</span>
+                            <span id="modal-phone" class="text-sm font-semibold text-white">Đang tải...</span>
+                        </div>
+                    </div>
+                    <div class="flex flex-col gap-1">
+                        <span class="text-xs text-gray-500 uppercase font-bold tracking-wider">Thời gian đặt</span>
+                        <div class="flex items-center gap-2 text-white">
+                            <span class="material-symbols-outlined text-gray-400 text-lg">schedule</span>
+                            <span id="modal-datetime" class="text-sm font-semibold">Đang tải...</span>
+                        </div>
+                    </div>
+                    <div class="flex flex-col gap-1">
+                        <span class="text-xs text-gray-500 uppercase font-bold tracking-wider">Vị trí mong muốn</span>
+                        <div class="flex items-center gap-2">
+                            <span id="modal-icon" class="material-symbols-outlined text-gray-400 text-lg">deck</span>
+                            <span id="modal-table" class="text-sm font-semibold text-white">Đang tải...</span>
                         </div>
                     </div>
                 </div>
                 <div class="flex flex-col gap-6">
-                    <div class="flex items-center gap-2 border-b border-border-dark pb-px overflow-x-auto">
-                        <button
-                            class="px-4 py-2 text-sm font-bold text-primary border-b-2 border-primary whitespace-nowrap">Tiêu
+                    <div id="table-tabs"
+                        class="flex items-center gap-2 border-b border-border-dark pb-px overflow-x-auto">
+                        <button data-type="Tiêu chuẩn"
+                            class="px-4 py-2 text-sm font-medium text-gray-500 hover:text-white transition-colors whitespace-nowrap tab-btn">Tiêu
                             chuẩn</button>
-                        <button
-                            class="px-4 py-2 text-sm font-medium text-gray-500 hover:text-white transition-colors whitespace-nowrap">Riêng
+                        <button data-type="Riêng tư"
+                            class="px-4 py-2 text-sm font-medium text-gray-500 hover:text-white transition-colors whitespace-nowrap tab-btn">Riêng
                             tư</button>
-                        <button
-                            class="px-4 py-2 text-sm font-medium text-gray-500 hover:text-white transition-colors whitespace-nowrap flex items-center gap-1">
+                        <button data-type="Gần cửa sổ"
+                            class="px-4 py-2 text-sm font-medium text-gray-500 hover:text-white transition-colors whitespace-nowrap tab-btn flex items-center gap-1">
                             Gần cửa sổ
-                            <span class="size-1.5 rounded-full bg-primary"></span>
                         </button>
-                        <button
-                            class="px-4 py-2 text-sm font-medium text-gray-500 hover:text-white transition-colors whitespace-nowrap">Ngoài
+                        <button data-type="Ngoài trời"
+                            class="px-4 py-2 text-sm font-medium text-gray-500 hover:text-white transition-colors whitespace-nowrap tab-btn">Ngoài
                             trời</button>
                     </div>
                     <div class="flex items-center gap-6 text-[10px] font-bold uppercase tracking-widest text-gray-500">
@@ -327,18 +327,32 @@
                             đặt
                         </div>
                     </div>
-                    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                    <div id="table-grid"
+                        class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 min-h-[200px]">
+                        <!-- Bàn sẽ được JS render động -->
+                    </div>
+                    <!-- <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
                         <div
                             class="group cursor-pointer relative flex flex-col items-center justify-center gap-3 p-5 rounded-2xl bg-primary/5 border border-primary/20 hover:border-primary hover:bg-primary/10 transition-all">
-                            <span class="material-symbols-outlined text-primary text-3xl">table_bar</span>
+                            <span class="material-symbols-outlined text-primary text-3xl">table_restaurant</span>
                             <div class="text-center">
                                 <p class="text-white text-sm font-bold">Bàn 01</p>
-                                <p class="text-primary text-[10px] font-medium">4 Chỗ</p>
+                            </div>
+                        </div>
+                        <div
+                            class="group cursor-pointer relative flex flex-col items-center justify-center gap-3 p-5 rounded-2xl bg-primary/20 border-2 border-primary shadow-[0_0_15px_rgba(25,230,94,0.3)] transition-all">
+                            <span class="material-symbols-outlined text-primary text-3xl">table_restaurant</span>
+                            <div class="text-center">
+                                <p class="text-white text-sm font-bold">Bàn O2</p>
+                            </div>
+                            <div
+                                class="absolute -top-2 -right-2 size-6 rounded-full bg-primary flex items-center justify-center text-background-dark shadow-lg">
+                                <span class="material-symbols-outlined text-base font-bold">check</span>
                             </div>
                         </div>
                         <div
                             class="opacity-60 cursor-not-allowed flex flex-col items-center justify-center gap-3 p-5 rounded-2xl bg-yellow-500/5 border border-yellow-500/20">
-                            <span class="material-symbols-outlined text-yellow-500 text-3xl">group</span>
+                            <span class="material-symbols-outlined text-yellow-500 text-3xl">restaurant</span>
                             <div class="text-center">
                                 <p class="text-white text-sm font-bold">Bàn 03</p>
                                 <p class="text-yellow-500 text-[10px] font-medium">Đang dùng</p>
@@ -352,11 +366,11 @@
                                 <p class="text-blue-500 text-[10px] font-medium">Đã đặt</p>
                             </div>
                         </div>
-                    </div>
+                    </div> -->
                 </div>
             </div>
             <div class="p-6 border-t border-border-dark bg-background-dark/80 flex items-center justify-end gap-3">
-                <button type="button" onclick="closeAssignModal();"
+                <button type="button" onclick="closeAssignModal()"
                     class="px-6 py-2.5 rounded-xl border border-border-dark text-gray-300 font-bold text-sm hover:bg-white/5 transition-colors">
                     Hủy
                 </button>
@@ -554,10 +568,10 @@
                             @if(session()->has('message'))
                                 <div id="session-alert"
                                     class="flex items-center gap-2 px-4 py-3 rounded-lg
-                                                                                                                                                                                                            bg-primary/10 border border-primary/25
-                                                                                                                                                                                                            text-primary text-xs font-semibold
-                                                                                                                                                                                                            shadow-md shadow-primary/15
-                                                                                                                                                                                                            animate-fade-in relative">
+                                                                                                                                                                                                                                                                                                        bg-primary/10 border border-primary/25
+                                                                                                                                                                                                                                                                                                        text-primary text-xs font-semibold
+                                                                                                                                                                                                                                                                                                        shadow-md shadow-primary/15
+                                                                                                                                                                                                                                                                                                        animate-fade-in relative">
 
                                     <span class="material-symbols-outlined text-primary text-base mt-0.5">
                                         check_circle
@@ -570,10 +584,10 @@
                                     <!-- Close button -->
                                     <button type="button" aria-label="Đóng thông báo" onclick="closeSessionAlert()"
                                         class="ml-1 flex items-center justify-center
-                                                                                                                                                                                                                   w-7 h-7 rounded-full
-                                                                                                                                                                                                                   text-primary/70 hover:text-primary
-                                                                                                                                                                                                                   hover:bg-primary/20
-                                                                                                                                                                                                                   transition">
+                                                                                                                                                                                                                                                                                                               w-7 h-7 rounded-full
+                                                                                                                                                                                                                                                                                                               text-primary/70 hover:text-primary
+                                                                                                                                                                                                                                                                                                               hover:bg-primary/20
+                                                                                                                                                                                                                                                                                                               transition">
                                         <span class="material-symbols-outlined text-sm">close</span>
                                     </button>
                                 </div>
@@ -921,30 +935,198 @@
 
         // Gán bàn
         let currentBookingId = null;
+        let preferredTableType = 'Tiêu chuẩn'; // mặc định
 
         function openAssignModal(bookingId) {
-            currentBookingId = bookingId;  // Lưu ID booking để dùng sau
-            document.getElementById('assign-table').classList.remove('hidden');
-            document.getElementById('assign-table').classList.add('flex');
+            currentBookingId = bookingId;
 
-            // Optional: Có thể load thêm thông tin booking vào modal nếu cần (dùng AJAX sau này)
-            console.log('Mở modal gán bàn cho booking ID:', bookingId);
+            // Reset modal
+            document.getElementById('modal-name').textContent = 'Đang tải...';
+            document.getElementById('modal-phone').textContent = 'Đang tải...';
+            document.getElementById('modal-datetime').textContent = 'Đang tải...';
+            document.getElementById('modal-table').textContent = 'Đang tải...';
+            document.getElementById('modal-icon').textContent = 'hourglass_empty';
+
+            const modal = document.getElementById('assign-table');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+
+            fetch(`/booking/${bookingId}/info`, {
+                headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' }
+            })
+                .then(res => res.json())
+                .then(data => {
+                    document.getElementById('modal-name').textContent = data.name || '--';
+                    document.getElementById('modal-phone').textContent = data.phone || '--';
+                    document.getElementById('modal-datetime').textContent = `${data.time} - ${data.date}`;
+
+                    preferredTableType = data.table_type || 'Tiêu chuẩn';
+                    document.getElementById('modal-table').textContent = preferredTableType;
+
+                    const icons = {
+                        'Tiêu chuẩn': 'deck',
+                        'Gần cửa sổ': 'window',
+                        'Riêng tư': 'privacy_tip',
+                        'Ngoài trời': 'yard'
+                    };
+                    document.getElementById('modal-icon').textContent = icons[preferredTableType] || 'table_bar';
+
+                    // Tự động chọn tab theo loại mong muốn
+                    document.querySelectorAll('#table-tabs .tab-btn').forEach(btn => {
+                        btn.classList.remove('text-primary', 'border-b-2', 'border-primary', 'font-bold');
+                        if (btn.dataset.type === preferredTableType) {
+                            btn.classList.add('text-primary', 'border-b-2', 'border-primary', 'font-bold');
+                        }
+                    });
+
+                    // Load danh sách bàn theo loại mặc định
+                    loadTables(preferredTableType);
+                })
+                .catch(err => {
+                    console.error(err);
+                    document.getElementById('modal-name').textContent = 'Lỗi tải';
+                });
         }
+
+        // Hàm load bàn từ DB theo loại
+        function loadTables(type) {
+            fetch(`/tables/by-type/${encodeURIComponent(type)}`)
+                .then(res => res.json())
+                .then(tables => {
+                    const grid = document.getElementById('table-grid');
+                    grid.innerHTML = ''; // Xóa cũ
+
+                    if (tables.length === 0) {
+                        grid.innerHTML = '<div class="col-span-full text-center text-gray-400 py-10">Không có bàn nào</div>';
+                        return;
+                    }
+
+                    tables.forEach(table => {
+                        let bgClass = '';
+                        let borderClass = '';
+                        let iconColor = 'text-gray-400';
+                        let statusText = '';
+                        let iconName = 'table_restaurant'; // mặc định
+
+                        const status = table.status?.toLowerCase() || 'trống';
+
+                        if (status === 'trống') {
+                            bgClass = 'bg-primary/5 border border-primary/20 hover:border-primary hover:bg-primary/10 cursor-pointer';
+                            iconColor = 'text-primary';
+                            iconName = 'table_restaurant';
+                        } else if (status === 'đang dùng') {
+                            bgClass = 'opacity-60 cursor-not-allowed bg-yellow-500/5 border border-yellow-500/20';
+                            iconColor = 'text-yellow-500';
+                            iconName = 'restaurant'; // icon bạn dùng cho đang dùng
+                            statusText = '<p class="text-yellow-500 text-[10px] font-medium">Đang dùng</p>';
+                        } else if (status === 'đã đặt') {
+                            bgClass = 'opacity-60 cursor-not-allowed bg-blue-500/5 border border-blue-500/20';
+                            iconColor = 'text-blue-500';
+                            iconName = 'event_seat'; // icon bạn dùng cho đã đặt
+                            statusText = '<p class="text-blue-500 text-[10px] font-medium">Đã đặt</p>';
+                        }
+
+                        const div = document.createElement('div');
+                        div.className = `group relative flex flex-col items-center justify-center gap-3 p-5 rounded-2xl ${bgClass} transition-all`;
+                        div.dataset.tableId = table.id; // để sau này gửi id bàn khi xác nhận (nếu cần)
+
+                        div.innerHTML = `
+                    <span class="material-symbols-outlined ${iconColor} text-3xl">${iconName}</span>
+                    <div class="text-center">
+                        <p class="text-white text-sm font-bold">${table.name}</p>
+                        ${statusText}
+                    </div>
+                `;
+
+                        // Nếu bàn trống → thêm sự kiện click để chọn
+                        if (status === 'trống') {
+                            div.addEventListener('click', () => {
+                                // Xóa check cũ
+                                document.querySelectorAll('#table-grid > div').forEach(item => {
+                                    item.classList.remove('bg-primary/20', 'border-2', 'border-primary', 'shadow-[0_0_15px_rgba(25,230,94,0.3)]');
+                                    const oldCheck = item.querySelector('.check-icon');
+                                    if (oldCheck) oldCheck.remove();
+                                });
+
+                                // Thêm check + style cho bàn được chọn
+                                div.classList.add('bg-primary/20', 'border-2', 'border-primary', 'shadow-[0_0_15px_rgba(25,230,94,0.3)]');
+
+                                const checkDiv = document.createElement('div');
+                                checkDiv.className = 'absolute -top-2 -right-2 size-6 rounded-full bg-primary flex items-center justify-center text-background-dark shadow-lg check-icon';
+                                checkDiv.innerHTML = '<span class="material-symbols-outlined text-base font-bold">check</span>';
+                                div.appendChild(checkDiv);
+                            });
+                        }
+
+                        grid.appendChild(div);
+                    });
+                })
+                .catch(err => {
+                    grid.innerHTML = '<div class="col-span-full text-center text-red-400 py-10">Lỗi tải bàn</div>';
+                });
+        }
+
+        // Chuyển tab khi click
+        document.addEventListener('click', e => {
+            const btn = e.target.closest('.tab-btn');
+            if (btn) {
+                const type = btn.dataset.type;
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('text-primary', 'border-b-2', 'border-primary', 'font-bold'));
+                btn.classList.add('text-primary', 'border-b-2', 'border-primary', 'font-bold');
+
+                loadTables(type);
+            }
+        });
 
         function closeAssignModal() {
             document.getElementById('assign-table').classList.add('hidden');
             document.getElementById('assign-table').classList.remove('flex');
-            currentBookingId = null; // Reset
+            currentBookingId = null;
         }
 
-        // Xử lý click nút "Xác nhận gán bàn" trong modal
-        document.getElementById('confirm-assign-btn').addEventListener('click', function () {
-            if (currentBookingId) {
-                // Chuyển hướng đến route approve_book
-                window.location.href = `/approve_book/${currentBookingId}`;
-            } else {
-                alert('Không tìm thấy ID booking!');
+        document.getElementById('confirm-assign-btn')?.addEventListener('click', () => {
+            if (!currentBookingId) {
+                alert('Không tìm thấy ID đặt bàn!');
+                return;
             }
+
+            // Tìm bàn đã chọn
+            const selectedTable = document.querySelector('#table-grid > div.bg-primary\\/20, #table-grid > div.border-2.border-primary');
+
+            if (!selectedTable) {
+                alert('Vui lòng chọn một bàn trống!');
+                return;
+            }
+
+            const tableId = selectedTable.dataset.tableId;
+
+            if (!tableId) {
+                alert('Không tìm thấy ID bàn!');
+                return;
+            }
+
+            // Tạo form POST ẩn để gửi an toàn
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = `/approve_book/${currentBookingId}`;
+
+            // CSRF token (Blade sẽ render token thật)
+            const csrf = document.createElement('input');
+            csrf.type = 'hidden';
+            csrf.name = '_token';
+            csrf.value = '{{ csrf_token() }}';
+            form.appendChild(csrf);
+
+            // table_id
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'table_id';
+            input.value = tableId;
+            form.appendChild(input);
+
+            // Submit form
+            document.body.appendChild(form);
+            form.submit();
         });
     </script>
     <!-- Nút thêm mới -->

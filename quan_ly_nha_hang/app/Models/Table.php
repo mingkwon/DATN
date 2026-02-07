@@ -12,4 +12,15 @@ class Table extends Model
         'vi_tri',
         'trang_thai'
     ];
+
+    // Relationship: Booking sớm nhất trong tương lai (đã xác nhận)
+    public function latestBooking()
+    {
+        return $this->hasOne(Book::class, 'table_id', 'id')
+                    ->where('status', 'Đã xác nhận')
+                    ->whereRaw("CONCAT(date, ' ', time) > ?", [now()->toDateTimeString()])
+                    ->orderBy('date', 'asc')
+                    ->orderBy('time', 'asc')
+                    ->limit(1);
+    }
 }
