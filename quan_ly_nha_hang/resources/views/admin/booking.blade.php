@@ -136,7 +136,7 @@
                             <div class="relative">
                                 <span
                                     class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-gray-500">schedule</span>
-                                <input name="time" id="booking-time" type="time" required  class="w-full bg-background-dark border border-border-dark text-white text-sm rounded-xl py-3 pl-11 pr-4
+                                <input name="time" id="booking-time" type="time" required class="w-full bg-background-dark border border-border-dark text-white text-sm rounded-xl py-3 pl-11 pr-4
               focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all
               [color-scheme:dark]" />
 
@@ -517,7 +517,7 @@
                         <div class="relative w-full md:w-96 group">
                             <span
                                 class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-primary transition-colors">search</span>
-                            <input id="search-input" name="search" value="{{ request('search') }}"
+                            <input id="search-booking" name="search" value="{{ request('search') }}"
                                 class="w-full bg-surface-dark border border-border-dark text-white text-sm rounded-xl py-3 pl-10 pr-12 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all placeholder:text-gray-600"
                                 placeholder="Tìm tên khách hàng, SĐT..." type="text" />
                             @if(request('search'))
@@ -529,66 +529,49 @@
                         </div>
 
                         <script>
-                            const searchInput = document.getElementById('search-input');
+                            // Tìm kiếm realtime cho danh sách đặt bàn
+                            document.getElementById('search-booking')?.addEventListener('input', function () {
+                                const searchTerm = this.value.toLowerCase().trim();
 
-                            searchInput.addEventListener('keypress', function (e) {
-                                if (e.key === 'Enter') {
-                                    e.preventDefault();
-                                    applySearch();
-                                }
+                                // Lấy tất cả hàng trong bảng (trừ header)
+                                document.querySelectorAll('tbody tr').forEach(row => {
+                                    // Lấy tên khách và SĐT từ các cột tương ứng
+                                    const nameCell = row.querySelector('td:nth-child(1) p'); // Cột tên khách
+                                    const phoneCell = row.querySelector('td:nth-child(2)');   // Cột SĐT
+
+                                    const name = nameCell ? nameCell.textContent.toLowerCase() : '';
+                                    const phone = phoneCell ? phoneCell.textContent.toLowerCase() : '';
+
+                                    // Nếu tên hoặc SĐT chứa từ khóa → hiển thị hàng, ngược lại ẩn
+                                    if (name.includes(searchTerm) || phone.includes(searchTerm)) {
+                                        row.style.display = '';
+                                    } else {
+                                        row.style.display = 'none';
+                                    }
+                                });
                             });
-
-                            // Optional: Tìm khi blur (mất focus) - nếu muốn tự động tìm khi gõ xong
-                            // searchInput.addEventListener('blur', applySearch);
-
-                            function applySearch() {
-                                const url = new URL(window.location);
-                                const searchValue = searchInput.value.trim();
-
-                                if (searchValue) {
-                                    url.searchParams.set('search', searchValue);
-                                } else {
-                                    url.searchParams.delete('search');
-                                }
-
-                                // Reset về trang 1 khi search mới
-                                url.searchParams.delete('page');
-
-                                window.location = url;
-                            }
-
-                            function clearSearch() {
-                                const url = new URL(window.location);
-                                url.searchParams.delete('search');
-                                url.searchParams.delete('page');
-                                window.location = url;
-                            }
                         </script>
                         <div>
                             @if(session()->has('message'))
-                                <div id="session-alert"
-                                    class="flex items-center gap-2 px-4 py-3 rounded-lg
-                                                                                                                                                                                                                                                                                                        bg-primary/10 border border-primary/25
-                                                                                                                                                                                                                                                                                                        text-primary text-xs font-semibold
-                                                                                                                                                                                                                                                                                                        shadow-md shadow-primary/15
-                                                                                                                                                                                                                                                                                                        animate-fade-in relative">
+                                <div id="session-alert" class="fixed left-1/2 top-4 -translate-x-1/2 z-[1000]
+                                     flex items-center gap-3 px-6 py-3 rounded-xl
+                                     bg-[#0f172a] border border-primary/30
+                                     text-slate-100 text-sm font-medium
+                                     shadow-2xl animate-fade-in-up">
 
-                                    <span class="material-symbols-outlined text-primary text-base mt-0.5">
+                                    <span class="material-symbols-outlined text-xl text-primary flex-shrink-0">
                                         check_circle
                                     </span>
 
-                                    <span class="flex-1 leading-relaxed">
-                                        {{ session()->get('message') }}
+                                    <span class="leading-tight">
+                                        {{ session('message') }}
                                     </span>
 
-                                    <!-- Close button -->
-                                    <button type="button" aria-label="Đóng thông báo" onclick="closeSessionAlert()"
-                                        class="ml-1 flex items-center justify-center
-                                                                                                                                                                                                                                                                                                               w-7 h-7 rounded-full
-                                                                                                                                                                                                                                                                                                               text-primary/70 hover:text-primary
-                                                                                                                                                                                                                                                                                                               hover:bg-primary/20
-                                                                                                                                                                                                                                                                                                               transition">
-                                        <span class="material-symbols-outlined text-sm">close</span>
+                                    <button type="button" aria-label="Đóng" onclick="closeSessionAlert()" class="ml-2 flex items-center justify-center
+                                               w-7 h-7 rounded-full
+                                               bg-white/10 hover:bg-white/20
+                                               text-slate-200 transition-all duration-200">
+                                        <span class="material-symbols-outlined text-lg">close</span>
                                     </button>
                                 </div>
                             @endif
@@ -603,7 +586,7 @@
                             }
                             setTimeout(() => {
                                 closeSessionAlert();
-                            }, 4000);
+                            }, 3000);
                         </script>
                         <div class="flex items-center gap-3 w-full md:w-auto overflow-x-auto pb-2 md:pb-0">
                             <div class="relative min-w-[150px]">
@@ -762,7 +745,7 @@
                                             {{-- STATUS --}}
                                             <td class="px-6 py-4">
                                                 @php
-                                                    $status = $booking->display_status;
+                                                    $status = $booking->status;
                                                     $statusDotClass = match ($status) {
                                                         'Chờ xác nhận' => 'size-1.5 rounded-full bg-yellow-500 animate-pulse',
                                                         'Đã xác nhận' => 'size-1.5 rounded-full bg-primary',

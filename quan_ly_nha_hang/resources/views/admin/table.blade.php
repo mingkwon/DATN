@@ -213,6 +213,32 @@
             </div>
         </form>
     </div>
+    <!-- Modal popup khi click bàn "Đã đặt" -->
+    <div id="booked-table-modal"
+        class="fixed inset-0 z-50 hidden items-center justify-center bg-black/70 backdrop-blur-sm p-4">
+        <div class="bg-surface-dark border border-border-dark rounded-2xl shadow-2xl p-8 max-w-md w-full text-center">
+            <h3 class="text-2xl font-bold text-white mb-4">Bàn này đã được đặt</h3>
+            <p class="text-gray-300 mb-8">Bàn này đã được đặt, đang chờ khách đến.</p>
+
+            <div class="flex justify-center gap-4">
+                <!-- Nút Mở bàn ngay -->
+                <button id="open-table-btn"
+                    class="px-6 py-3 bg-primary text-background-dark font-bold rounded-xl hover:bg-primary-dark transition-all shadow-[0_0_15px_rgba(25,230,94,0.3)]">
+                    Mở bàn ngay
+                </button>
+
+                <!-- Nút Hủy bàn đặt -->
+                <button id="cancel-booking-btn"
+                    class="px-6 py-3 bg-red-600 text-white font-bold rounded-xl hover:bg-red-700 transition-all">
+                    Hủy bàn đặt
+                </button>
+            </div>
+
+            <button id="close-booked-modal" class="mt-6 text-gray-400 hover:text-white transition-colors">
+                Đóng
+            </button>
+        </div>
+    </div>
     <div class="flex h-screen w-full">
         <div
             class="w-[280px] h-full flex-col justify-between bg-surface-dark border-r border-border-dark hidden lg:flex flex-shrink-0 z-30">
@@ -357,9 +383,7 @@
                     class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-6">
                     @foreach($tables as $table)
                         <div class="group relative bg-surface-dark border border-border-dark rounded-2xl p-5 flex flex-col items-center justify-center gap-4 cursor-pointer transition-all hover:shadow-lg hover:shadow-primary/10 hover:-translate-y-1 table-item"
-                            data-type="{{ $table->vi_tri }}"
-                            data-time-use="{{ $table->trang_thai == 'Đang dùng' ? '00:45' : '' }}"
-                            data-time-booked="{{ $table->latestBooking?->time ?? '' }}">
+                            data-type="{{ $table->vi_tri }}" data-time-booked="{{ $table->latestBooking?->time ?? '' }}">
 
                             <!-- 1. Chấm xanh góc trên phải cho bàn Trống -->
                             @if($table->trang_thai == 'Trống')
@@ -368,18 +392,28 @@
                                 </div>
                             @endif
 
-                            <!-- 2. Thời gian góc trên phải (cho Đang dùng và Đã đặt) -->
-                            <div class="absolute top-3 right-3 flex items-center gap-1 text-[10px] font-bold px-2 py-1 rounded bg-opacity-20
-                                            {{ $table->trang_thai == 'Đang dùng' ? 'bg-yellow-500/20 text-yellow-500' : '' }}
-                                            {{ $table->trang_thai == 'Đã đặt' ? 'bg-blue-500/20 text-blue-500' : '' }}">
+                            <!-- Thời gian góc trên phải (chỉ hiện cho bàn Đang dùng) -->
+                            @if($table->trang_thai == 'Đang dùng' && $table->currentOrder)
+                                <div class="absolute top-3 right-3 flex items-center gap-1 text-xs font-bold px-2 py-1 rounded bg-yellow-500/20 text-yellow-400 shadow-md usage-time"
+                                    data-opened-at="{{ $table->currentOrder->created_at->toISOString() }}">
+                                    <span class="material-symbols-outlined text-sm">schedule</span>
+                                    <span class="time-display">00:00</span>
+                                </div>
+                            @endif
+
+                            <!-- 2. Thời gian góc trên phải (cho Đã đặt) -->
+                            <div
+                                class="absolute top-3 right-3 flex items-center gap-1 text-[10px] font-bold px-2 py-1 rounded bg-opacity-20
+                                                {{ $table->trang_thai == 'Đã đặt' ? 'bg-blue-500/20 text-blue-500' : '' }}">
                                 <!-- JS sẽ fill nội dung thời gian dựa trên data attribute -->
                             </div>
 
                             <!-- 3. Icon và nền theo trạng thái -->
-                            <div class="size-20 rounded-full flex items-center justify-center transition-transform group-hover:scale-110 duration-300
-                                            {{ $table->trang_thai == 'Trống' ? 'bg-primary/10 text-primary' : '' }}
-                                            {{ $table->trang_thai == 'Đang dùng' ? 'bg-yellow-500/10 text-yellow-500' : '' }}
-                                            {{ $table->trang_thai == 'Đã đặt' ? 'bg-blue-500/10 text-blue-500' : '' }}">
+                            <div
+                                class="size-20 rounded-full flex items-center justify-center transition-transform group-hover:scale-110 duration-300
+                                                                        {{ $table->trang_thai == 'Trống' ? 'bg-primary/10 text-primary' : '' }}
+                                                                        {{ $table->trang_thai == 'Đang dùng' ? 'bg-yellow-500/10 text-yellow-500' : '' }}
+                                                                        {{ $table->trang_thai == 'Đã đặt' ? 'bg-blue-500/10 text-blue-500' : '' }}">
                                 <span class="material-symbols-outlined text-4xl">
                                     {{ $table->trang_thai == 'Trống' ? 'table_restaurant' : '' }}
                                     {{ $table->trang_thai == 'Đang dùng' ? 'restaurant' : '' }}
@@ -388,11 +422,12 @@
                             </div>
 
                             <div class="text-center">
-                                <h3 class="text-white text-xl font-bold">{{ $table->ten_ban }}</h3>
-                                <p class="text-sm font-bold uppercase tracking-wide mt-1
-                                                {{ $table->trang_thai == 'Trống' ? 'text-primary' : '' }}
-                                                {{ $table->trang_thai == 'Đang dùng' ? 'text-yellow-500' : '' }}
-                                                {{ $table->trang_thai == 'Đã đặt' ? 'text-blue-500' : '' }}">
+                                <h3 class="text-white text-xl font-bold">Bàn {{ $table->ten_ban }}</h3>
+                                <p
+                                    class="text-sm font-bold uppercase tracking-wide mt-1
+                                                                            {{ $table->trang_thai == 'Trống' ? 'text-primary' : '' }}
+                                                                            {{ $table->trang_thai == 'Đang dùng' ? 'text-yellow-500' : '' }}
+                                                                            {{ $table->trang_thai == 'Đã đặt' ? 'text-blue-500' : '' }}">
                                     {{ $table->trang_thai }}
                                 </p>
                             </div>
@@ -498,6 +533,80 @@
             else if (status === 'Trống') {
                 timeDiv.innerHTML = ''; // Xóa nếu có
             }
+        });
+
+        // Mở modal khi click bàn "Đã đặt"
+        document.querySelectorAll('.table-item').forEach(item => {
+            item.addEventListener('click', (e) => {
+                const status = item.querySelector('p.text-sm.font-bold.uppercase').textContent.trim();
+                if (status === 'Đã đặt') {
+                    e.preventDefault(); // Ngăn chuyển trang order ngay
+                    document.getElementById('booked-table-modal').classList.remove('hidden');
+                    document.getElementById('booked-table-modal').classList.add('flex');
+
+                    // Lưu ID bàn để xử lý sau (nếu cần)
+                    const tableId = item.querySelector('a.absolute.inset-0')?.getAttribute('href').split('/').pop() || '';
+
+                    // Nút Mở bàn ngay
+                    document.getElementById('open-table-btn').onclick = () => {
+                        // Chuyển đến trang order bàn
+                        window.location.href = item.querySelector('a.absolute.inset-0')?.href || '#';
+                    };
+
+                    // Nút Hủy bàn đặt
+                    document.getElementById('cancel-booking-btn').onclick = () => {
+                        if (confirm('Bạn chắc chắn muốn hủy đặt bàn này?')) {
+                            // Gửi request hủy (thay bằng route thật của bạn)
+                            fetch(`/cancel_booking/${tableId}`, {
+                                method: 'POST',
+                                headers: {
+                                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                    'Content-Type': 'application/json',
+                                },
+                            })
+                                .then(response => response.json())
+                                .then(data => {
+                                    if (data.success) {
+                                        alert('Đã hủy đặt bàn thành công!');
+                                        location.reload(); // Reload để cập nhật trạng thái bàn
+                                    } else {
+                                        alert('Lỗi: ' + data.message);
+                                    }
+                                })
+                                .catch(err => alert('Lỗi kết nối: ' + err));
+                        }
+                    };
+                }
+            });
+        });
+
+        // Đóng modal
+        document.getElementById('close-booked-modal')?.addEventListener('click', () => {
+            document.getElementById('booked-table-modal').classList.add('hidden');
+            document.getElementById('booked-table-modal').classList.remove('flex');
+        });
+
+        // Tính thời gian sử dụng cho tất cả bàn "Đang dùng" (chỉ HH:MM)
+        document.querySelectorAll('.usage-time').forEach(container => {
+            const openedAtStr = container.getAttribute('data-opened-at');
+            const timeDisplay = container.querySelector('.time-display');
+
+            if (!openedAtStr || !timeDisplay) return;
+
+            const startTime = new Date(openedAtStr);
+
+            function updateTime() {
+                const now = new Date();
+                const diffMs = now - startTime;
+
+                const hours = Math.floor(diffMs / (1000 * 60 * 60));
+                const minutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+
+                timeDisplay.textContent = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+            }
+
+            updateTime();
+            setInterval(updateTime, 1000); // Cập nhật mỗi phút (vì chỉ cần phút, không cần giây)
         });
     </script>
 

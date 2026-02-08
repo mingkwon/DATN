@@ -80,6 +80,7 @@
     <div class="flex h-screen w-full">
         <div
             class="w-[280px] h-full flex-col justify-between bg-surface-dark border-r border-border-dark hidden lg:flex flex-shrink-0 z-30">
+            <!-- Sidebar giữ nguyên như cũ -->
             <div class="flex flex-col gap-4 p-4">
                 <div class="flex items-center gap-3 px-2 py-2">
                     <div class="bg-center bg-no-repeat bg-cover rounded-full size-10 bg-primary/20 flex items-center justify-center text-primary"
@@ -139,7 +140,7 @@
 
         <main class="flex-1 flex flex-col h-full overflow-hidden">
             <header
-                class="flex-shrink-0 p-6 pb-2 border-b border-border-dark bg-surface-dark/50 backdrop-blur-md z-10 flex flex-col gap-6">
+                class="relative flex-shrink-0 p-6 pb-2 border-b border-border-dark bg-surface-dark/50 backdrop-blur-md z-10 flex flex-col gap-6">
                 <div class="flex items-center justify-between">
                     <div class="flex items-center gap-3">
                         <button
@@ -153,18 +154,34 @@
                             </button>
                             <div>
                                 <h2 class="text-white text-2xl md:text-3xl font-black leading-tight tracking-tight">Bàn
-                                    A02
+                                    {{ $table->ten_ban }}
                                 </h2>
-                                <p class="text-gray-400 text-sm font-normal mt-1">Nhân viên phục vụ: Nguyễn Văn A • Bắt
-                                    đầu:
-                                    10:30 AM</p>
                             </div>
-                            <span
-                                class="px-4 py-1.5 rounded-full bg-yellow-500/10 text-yellow-500 text-xs font-bold uppercase tracking-wide flex items-center gap-2 border border-yellow-500/20">
-                                <span class="size-2 rounded-full bg-yellow-500 animate-pulse"></span>
-                                Đang dùng
-                            </span>
                         </div>
+                        @if(session()->has('message'))
+                            <div id="session-alert" class="fixed left-1/2 top-4 -translate-x-1/2 z-[1000]
+                                                                         flex items-center gap-3 px-6 py-3 rounded-xl
+                                                                         bg-[#0f172a] border border-primary/30
+                                                                         text-slate-100 text-sm font-medium
+                                                                         shadow-2xl animate-fade-in-up">
+
+                                <span class="material-symbols-outlined text-xl text-primary flex-shrink-0">
+                                    check_circle
+                                </span>
+
+                                <span class="leading-tight">
+                                    {{ session('message') }}
+                                </span>
+
+                                <button type="button" aria-label="Đóng" onclick="closeSessionAlert()"
+                                    class="ml-2 flex items-center justify-center
+                                                                                   w-7 h-7 rounded-full
+                                                                                   bg-white/10 hover:bg-white/20
+                                                                                   text-slate-200 transition-all duration-200">
+                                    <span class="material-symbols-outlined text-lg">close</span>
+                                </button>
+                            </div>
+                        @endif
                     </div>
 
                     <div class="flex items-center gap-4">
@@ -179,7 +196,7 @@
                         <div class="relative w-64">
                             <input
                                 class="w-full pl-10 pr-4 py-3 bg-surface-dark border border-border-dark rounded-xl text-sm text-white placeholder-gray-500 focus:border-primary/50 focus:ring-0 outline-none"
-                                placeholder="Tìm món ăn..." type="text" />
+                                placeholder="Tìm món ăn..." type="text" id="search-food" />
                             <span
                                 class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">search</span>
                         </div>
@@ -187,202 +204,136 @@
                 </div>
 
                 <div class="flex items-center gap-2 overflow-x-auto no-scrollbar pb-2">
-                    <button
-                        class="flex items-center gap-2 px-5 py-2.5 rounded-lg bg-primary text-surface-dark font-bold text-sm shadow-[0_0_15px_rgba(25,230,94,0.2)] whitespace-nowrap transition-all">
+                    <button data-type="all"
+                        class="food-tab active flex items-center gap-2 px-5 py-2.5 rounded-lg bg-primary text-surface-dark font-bold text-sm shadow-[0_0_15px_rgba(25,230,94,0.2)] whitespace-nowrap transition-all">
                         Tất cả
                     </button>
-                    <button
-                        class="flex items-center gap-2 px-5 py-2.5 rounded-lg bg-surface-dark border border-border-dark text-gray-400 hover:text-white hover:bg-white/5 font-medium text-sm whitespace-nowrap transition-all">
+                    <button data-type="khai_vi"
+                        class="food-tab flex items-center gap-2 px-5 py-2.5 rounded-lg bg-surface-dark border border-border-dark text-gray-400 hover:text-white hover:bg-white/5 font-medium text-sm whitespace-nowrap transition-all">
                         Khai vị
                     </button>
-                    <button
-                        class="flex items-center gap-2 px-5 py-2.5 rounded-lg bg-surface-dark border border-border-dark text-gray-400 hover:text-white hover:bg-white/5 font-medium text-sm whitespace-nowrap transition-all">
+                    <button data-type="mon_chinh"
+                        class="food-tab flex items-center gap-2 px-5 py-2.5 rounded-lg bg-surface-dark border border-border-dark text-gray-400 hover:text-white hover:bg-white/5 font-medium text-sm whitespace-nowrap transition-all">
                         Món chính
                     </button>
-                    <button
-                        class="flex items-center gap-2 px-5 py-2.5 rounded-lg bg-surface-dark border border-border-dark text-gray-400 hover:text-white hover:bg-white/5 font-medium text-sm whitespace-nowrap transition-all">
+                    <button data-type="trang_mieng"
+                        class="food-tab flex items-center gap-2 px-5 py-2.5 rounded-lg bg-surface-dark border border-border-dark text-gray-400 hover:text-white hover:bg-white/5 font-medium text-sm whitespace-nowrap transition-all">
                         Tráng miệng
                     </button>
-                    <button
-                        class="flex items-center gap-2 px-5 py-2.5 rounded-lg bg-surface-dark border border-border-dark text-gray-400 hover:text-white hover:bg-white/5 font-medium text-sm whitespace-nowrap transition-all">
+                    <button data-type="do_uong"
+                        class="food-tab flex items-center gap-2 px-5 py-2.5 rounded-lg bg-surface-dark border border-border-dark text-gray-400 hover:text-white hover:bg-white/5 font-medium text-sm whitespace-nowrap transition-all">
                         Đồ uống
                     </button>
                 </div>
             </header>
 
             <div class="flex-1 flex overflow-hidden">
-                <!-- Bên trái: Danh sách món ăn (grid) -->
+                <!-- Bên trái: Danh sách món ăn từ DB -->
                 <div class="flex-1 overflow-y-auto p-6 bg-background-dark">
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        <!-- 6 món gốc của bạn -->
-                        <div
-                            class="group bg-surface-dark rounded-2xl p-3 hover:shadow-xl hover:shadow-primary/10 transition-all border border-border-dark hover:border-primary cursor-pointer relative overflow-hidden">
-                            <div class="relative h-32 mb-3 overflow-hidden rounded-xl">
-                                <img alt="Salad"
-                                    class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuB5Q6VX1NpKD1zhwcLD5F4QuHC-jSAWePM0Kl5CPZ4wixSDjq7KVe4zRnKrNyvx0utaRzrENqBWr8EHB9A_HmgInil5wBAX6AwvfKYf8_QTgs0LfHPiTofaryzPkUsgooBsjTDSy3Xi8wUmTlHlXmb2H2Lk09kusB3tbKvOmBUMOsMOwejqk4Lco2_bagDPAjgvSEd08rW4oLTLOP61NWeP3MnRqazGU5kx7bGaMcbyGfxRx-zHD3WK_TFjUuIYYycP3AP1jnGqMaSL" />
-                                <div
-                                    class="absolute top-2 right-2 bg-black/60 backdrop-blur-md px-2 py-1 rounded-lg text-white text-xs font-bold">
-                                    85.000đ</div>
+                    <div id="food-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        @foreach($foods as $food)
+                            <div class="group bg-surface-dark rounded-2xl p-3 hover:shadow-xl hover:shadow-primary/10 transition-all border border-border-dark hover:border-primary cursor-pointer relative overflow-hidden food-item"
+                                data-type="{{ $food->type }}">
+                                <div class="relative h-32 mb-3 overflow-hidden rounded-xl">
+                                    <img alt="{{ $food->title }}"
+                                        class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                                        src="{{ asset('food_img/' . $food->image) }}" />
+                                    <div
+                                        class="absolute top-2 right-2 bg-black/60 backdrop-blur-md px-2 py-1 rounded-lg text-white text-xs font-bold">
+                                        {{ number_format($food->price) }}đ
+                                    </div>
+                                </div>
+                                <h3 class="font-bold text-white mb-1">{{ $food->title }}</h3>
+                                <p class="text-xs text-gray-400 line-clamp-2 mb-3">{{ $food->detail }}</p>
+                                <button
+                                    class="w-full py-2 bg-primary/10 text-primary font-medium rounded-lg group-hover:bg-primary group-hover:text-surface-dark transition-colors flex items-center justify-center gap-1 add-to-order"
+                                    data-food-id="{{ $food->id }}" data-price="{{ $food->price }}"
+                                    data-title="{{ $food->title }}">
+                                    <span class="material-symbols-outlined text-sm">add</span> Thêm
+                                </button>
                             </div>
-                            <h3 class="font-bold text-white mb-1">Salad Cá Ngừ</h3>
-                            <p class="text-xs text-gray-400 line-clamp-2 mb-3">Cá ngừ tươi, xà lách, sốt chanh leo đặc
-                                biệt.
-                            </p>
-                            <button
-                                class="w-full py-2 bg-primary/10 text-primary font-medium rounded-lg group-hover:bg-primary group-hover:text-surface-dark transition-colors flex items-center justify-center gap-1">
-                                <span class="material-symbols-outlined text-sm">add</span> Thêm
-                            </button>
-                        </div>
-
-                        <!-- Copy 5 món còn lại tương tự từ file gốc của bạn (mình rút gọn để code ngắn, bạn paste đầy đủ nhé) -->
-                        <!-- ... Sườn Nướng BBQ, Bò Bít Tết, Mì Ý Carbonara, Salad Rau Vườn, Burger Bò Phô Mai ... -->
-
+                        @endforeach
                     </div>
                 </div>
 
-                <!-- Bên phải: DANH SÁCH MÓN (order summary) - KHÔI PHỤC ĐẦY ĐỦ NHƯ BẢN GỐC -->
+                <!-- Bên phải: DANH SÁCH MÓN ĐÃ CHỌN (order summary) -->
                 <div class="w-1/3 bg-surface-dark flex flex-col shadow-2xl relative z-10 border-l border-border-dark">
                     <div class="p-5 border-b border-border-dark flex justify-between items-center">
+                        <!-- <div>
+                            <h3 class="font-bold text-lg text-white">Danh sách món</h3>
+                            <p class="text-xs text-gray-400">Order #{{ $order->id ?? rand(10000, 99999) }} • <span
+                                    id="total-item-count">{{ $orderedItems->count() }}</span> items</p>
+                        </div> -->
                         <div>
                             <h3 class="font-bold text-lg text-white">Danh sách món</h3>
-                            <p class="text-xs text-gray-400">Order #88392 • 3 items</p>
+                            @if($order)
+                                <p class="text-xs text-gray-400">Order #{{ $order->id }} • <span
+                                        id="total-item-count">{{ $orderedItems->count() }}</span> items</p>
+                            @else
+                                <p class="text-xs text-gray-400">Order ## • <span id="total-item-count">{{ $orderedItems->count() }}</span>
+                                    items</p>
+                            @endif
                         </div>
-                        <button
+                        <!-- <button
                             class="text-primary hover:text-primary-dark text-sm font-semibold flex items-center gap-1">
                             <span class="material-symbols-outlined text-base">swap_horiz</span> Chuyển bàn
-                        </button>
+                        </button> -->
                     </div>
-                    <div class="flex-1 overflow-y-auto p-4 space-y-3">
-                        <div
-                            class="flex items-start gap-3 p-3 bg-background-dark rounded-xl border border-border-dark hover:border-primary/30 transition-colors group">
-                            <div class="w-14 h-14 rounded-lg bg-gray-700 overflow-hidden flex-shrink-0">
-                                <img alt="Ribs" class="w-full h-full object-cover"
-                                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuBt-PUr6s_Dd2LA3hyJSuBuBob-24JgXZdOsP8QdzKKlnCIlTYYOxyoa3Fab5DqPYSggHJwuuUHgq12_SYyEzdsmMU9SIUvZYKVQ5kPz2Io-f6Uc0iHo-lOCgTJyUg85asdx7XFsuBo1DZOEj3Aw8SHlTUI-8LKLau7lRPUHZTzFy48fTKjroYvbblY9T2ZucZNRQ0tdFQgA9taNpuaLGmMvzocTlAXWm4IreptterX-YHJJ8I4-89NTnusIogLjYNYXKffz1As7TCm" />
-                            </div>
-                            <div class="flex-1">
-                                <div class="flex justify-between items-start mb-1">
-                                    <h4 class="font-semibold text-sm text-white line-clamp-1">Sườn Nướng BBQ</h4>
-                                    <span class="font-bold text-sm text-white">500.000đ</span>
-                                </div>
-                                <div class="flex items-center justify-between">
-                                    <p class="text-xs text-gray-400">2 x 250.000đ</p>
-                                    <div
-                                        class="flex items-center gap-2 bg-background-dark rounded-lg p-1 border border-border-dark">
-                                        <button
-                                            class="w-5 h-5 flex items-center justify-center rounded bg-surface-dark hover:bg-red-900/50 text-gray-300 hover:text-red-400 transition-colors">
-                                            <span class="material-symbols-outlined text-xs">remove</span>
-                                        </button>
-                                        <span class="text-xs font-bold w-4 text-center text-white">2</span>
-                                        <button
-                                            class="w-5 h-5 flex items-center justify-center rounded bg-surface-dark hover:bg-primary/20 text-gray-300 hover:text-primary transition-colors">
-                                            <span class="material-symbols-outlined text-xs">add</span>
-                                        </button>
-                                    </div>
-                                </div>
-                                <div class="mt-2 text-xs text-emerald-500 flex items-center gap-1">
-                                    <span class="material-symbols-outlined text-[10px]">check_circle</span> Đã hoàn
-                                    thành
-                                </div>
-                            </div>
-                        </div>
 
-                        <div
-                            class="flex items-start gap-3 p-3 bg-background-dark rounded-xl border border-border-dark hover:border-primary/30 transition-colors">
-                            <div class="w-14 h-14 rounded-lg bg-gray-700 overflow-hidden flex-shrink-0">
-                                <img alt="Salad" class="w-full h-full object-cover"
-                                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuC8pIDVA2uF2pM8ddCGCJ0X9WUzI_lqng-H1Z9r-dfx1dHwgH5Syx2zA8EHH43pNHA1OKmvV_uSH-6EfgBkjl6fppDAehoECs8ZXoXJ8VrFSvDkDQxOio1m2fcYslT0y6cxWTuDcACWs9JHLohsCqd1KlYU6VUEJZddlMp_iLn0m9Egbgt8JULFh918xhk1A5lGhN5pM5KfdYMrT4nIQmcvxln9Tp44mkmy4EUaxzg9HclTq2U0GRCv1Xgxxo1dtYqVcJ1mndTUKuLC" />
-                            </div>
-                            <div class="flex-1">
-                                <div class="flex justify-between items-start mb-1">
-                                    <h4 class="font-semibold text-sm text-white line-clamp-1">Salad Cá Ngừ</h4>
-                                    <span class="font-bold text-sm text-white">85.000đ</span>
-                                </div>
-                                <div class="flex items-center justify-between">
-                                    <p class="text-xs text-gray-400">1 x 85.000đ</p>
-                                    <div
-                                        class="flex items-center gap-2 bg-background-dark rounded-lg p-1 border border-border-dark">
-                                        <button
-                                            class="w-5 h-5 flex items-center justify-center rounded bg-surface-dark hover:bg-red-900/50 text-gray-300 hover:text-red-400 transition-colors">
-                                            <span class="material-symbols-outlined text-xs">remove</span>
-                                        </button>
-                                        <span class="text-xs font-bold w-4 text-center text-white">1</span>
-                                        <button
-                                            class="w-5 h-5 flex items-center justify-center rounded bg-surface-dark hover:bg-primary/20 text-gray-300 hover:text-primary transition-colors">
-                                            <span class="material-symbols-outlined text-xs">add</span>
-                                        </button>
-                                    </div>
-                                </div>
-                                <div class="mt-2 text-xs text-emerald-500 flex items-center gap-1">
-                                    <span class="material-symbols-outlined text-[10px]">check_circle</span> Đã hoàn
-                                    thành
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="p-3 bg-primary/5 rounded-xl border border-primary/20 transition-colors">
-                            <div class="flex items-start gap-3">
-                                <div class="w-14 h-14 rounded-lg bg-gray-700 overflow-hidden flex-shrink-0 relative">
-                                    <img alt="Pasta" class="w-full h-full object-cover opacity-80"
-                                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuDGpVcLNiUGs_gItkPMy1J_koRNElFtRIqAgEDbUH0-kUF2ST5vVMbSWdwAoDpVF9yt6gml7HPbeQBU_KAC4X-e5sF1gBfp25SeiJR6hDm252EjOhLeqyOt_gs_W7-j_pSPfb-estzJp_w0TgHCvJxPmjO6KZum_M5n87bXWk-2g0D7jLP0sJYaUyFeCWY34tUwBCFdcCxgLW0FJfTZVzSCeRR3t9n3619LhwM9VkLFGlL-ziHCXYHvMpboy2zwjybsVqwNC_2LGW5m" />
-                                    <div class="absolute inset-0 flex items-center justify-center bg-black/20">
-                                        <span class="text-xs font-bold text-white bg-primary px-1 rounded">MỚI</span>
-                                    </div>
-                                </div>
+                    <div id="order-list" class="flex-1 overflow-y-auto p-4 space-y-3">
+                        <!-- Món đã gửi bếp từ DB (nhóm, cộng dồn số lượng) -->
+                        @foreach($orderedItems as $orderedItem)
+                            <div class="flex items-start gap-3 p-3 bg-background-dark rounded-xl border border-border-dark">
                                 <div class="flex-1">
                                     <div class="flex justify-between items-start mb-1">
-                                        <h4 class="font-semibold text-sm text-white line-clamp-1">Mì Ý Carbonara</h4>
-                                        <span class="font-bold text-sm text-white">120.000đ</span>
+                                        <h4 class="font-semibold text-sm text-white line-clamp-1">
+                                            {{ $orderedItem->food->title ?? 'Món không xác định' }}
+                                        </h4>
+                                        <span class="font-bold text-sm text-white">
+                                            {{ number_format($orderedItem->gia_tai_thoi_diem_dat) }}đ
+                                        </span>
                                     </div>
                                     <div class="flex items-center justify-between">
-                                        <p class="text-xs text-gray-400 italic">Chưa gửi bếp</p>
-                                        <div
-                                            class="flex items-center gap-2 bg-background-dark rounded-lg p-1 border border-border-dark">
-                                            <button
-                                                class="w-5 h-5 flex items-center justify-center rounded bg-surface-dark hover:bg-red-900/50 text-gray-300 hover:text-red-400 transition-colors">
-                                                <span class="material-symbols-outlined text-xs">remove</span>
-                                            </button>
-                                            <span class="text-xs font-bold w-4 text-center text-white">1</span>
-                                            <button
-                                                class="w-5 h-5 flex items-center justify-center rounded bg-surface-dark hover:bg-primary/20 text-gray-300 hover:text-primary transition-colors">
-                                                <span class="material-symbols-outlined text-xs">add</span>
-                                            </button>
-                                        </div>
+                                        <p class="text-xs text-gray-400">
+                                            Số lượng: {{ $orderedItem->so_luong }} ×
+                                            {{ number_format($orderedItem->gia_tai_thoi_diem_dat) }}đ
+                                        </p>
+                                        <!-- Không có nút - +, chỉ hiển thị số lượng -->
                                     </div>
-                                    <input
-                                        class="mt-2 w-full bg-surface-dark border border-border-dark rounded text-xs px-2 py-1 focus:border-primary focus:ring-0 outline-none text-white placeholder-gray-500"
-                                        placeholder="Ghi chú (ít cay...)" type="text" />
+                                    <div class="mt-2 text-xs text-emerald-500 flex items-center gap-1">
+                                        <span class="material-symbols-outlined text-[10px]">check_circle</span> Đã gửi bếp
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+                        @endforeach
+
+                        <!-- Món chưa gửi bếp (từ giỏ JS) - có viền xanh và nút - + -->
+                        <!-- JS sẽ render vào đây -->
                     </div>
 
                     <div class="bg-surface-dark border-t border-border-dark p-5">
                         <div class="space-y-2 mb-4">
                             <div class="flex justify-between text-sm text-gray-400">
-                                <span>Tạm tính (4 món)</span>
-                                <span>705.000đ</span>
+                                <span>Tạm tính (<span id="total-item-count-bottom">{{ $distinctItemCount }}</span>
+                                    món)</span>
+                                <span id="total-subtotal">{{ number_format($dbSubtotal) }}đ</span>
                             </div>
                             <div class="flex justify-between text-sm text-gray-400">
                                 <span>VAT (8%)</span>
-                                <span>56.400đ</span>
+                                <span id="total-vat">{{ number_format(round($dbSubtotal * 0.08)) }}đ</span>
                             </div>
                             <div class="border-t border-dashed border-border-dark my-2"></div>
                             <div class="flex justify-between items-end">
                                 <span class="font-bold text-white">Tổng cộng</span>
-                                <span class="font-bold text-xl text-primary">761.400đ</span>
+                                <span class="font-bold text-xl text-primary"
+                                    id="grand-total">{{ number_format($dbSubtotal + round($dbSubtotal * 0.08)) }}đ</span>
                             </div>
                         </div>
-                        <div class="grid grid-cols-2 gap-3 mb-3">
-                            <button
-                                class="flex items-center justify-center gap-2 py-3 rounded-xl border border-primary text-primary hover:bg-primary/10 transition-colors font-medium text-sm">
-                                <span class="material-symbols-outlined text-sm">add_circle_outline</span>
-                                Thêm món
-                            </button>
-                            <button
+                        <div class="grid grid-cols-1 gap-3 mb-3">
+                            <button id="send-to-kitchen-btn"
                                 class="flex items-center justify-center gap-2 py-3 rounded-xl bg-surface-dark border border-border-dark text-white hover:bg-white/5 transition-colors font-medium text-sm">
                                 <span class="material-symbols-outlined text-sm">soup_kitchen</span>
-                                Gửi bếp (1)
+                                Gửi bếp (<span id="kitchen-count">0</span>)
                             </button>
                         </div>
                         <button
@@ -394,6 +345,201 @@
                 </div>
             </div>
         </main>
+    </div>
+
+    <script>
+        // Tìm kiếm món ăn
+        document.getElementById('search-food')?.addEventListener('input', function (e) {
+            const searchTerm = e.target.value.toLowerCase();
+            document.querySelectorAll('.food-item').forEach(item => {
+                const title = item.querySelector('h3').textContent.toLowerCase();
+                item.style.display = title.includes(searchTerm) ? 'block' : 'none';
+            });
+        });
+
+        // Filter tab món ăn
+        document.querySelectorAll('.food-tab').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.food-tab').forEach(b => b.classList.remove('active', 'bg-primary', 'text-surface-dark', 'font-bold', 'shadow-[0_0_15px_rgba(25,230,94,0.2)]'));
+                btn.classList.add('active', 'bg-primary', 'text-surface-dark', 'font-bold', 'shadow-[0_0_15px_rgba(25,230,94,0.2)]');
+
+                const type = btn.dataset.type;
+                document.querySelectorAll('.food-item').forEach(item => {
+                    if (type === 'all' || item.dataset.type === type) {
+                        item.style.display = 'block';
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+            });
+        });
+
+        // Thêm món vào giỏ hàng (order summary)
+        let orderItems = [];
+        let subtotal = 0;
+
+        document.querySelectorAll('.add-to-order').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const foodId = btn.dataset.foodId;
+                const title = btn.dataset.title;
+                const price = parseInt(btn.dataset.price);
+
+                // Kiểm tra món đã có chưa
+                const existing = orderItems.find(item => item.id === foodId);
+                if (existing) {
+                    existing.quantity += 1;
+                } else {
+                    orderItems.push({ id: foodId, title, price, quantity: 1 });
+                }
+
+                updateOrderSummary();
+            });
+        });
+
+        function updateOrderSummary() {
+            const list = document.getElementById('order-list');
+
+            // Xóa phần render cũ của JS (nếu có)
+            document.querySelectorAll('.js-order-item').forEach(el => el.remove());
+
+            subtotal = 0;
+            orderItems.forEach((item, index) => {
+                subtotal += item.price * item.quantity;
+
+                const itemHtml = `
+            <div id="js-item-${index}" class="js-order-item flex items-start gap-3 p-3 bg-primary/5 rounded-xl border border-primary/50 transition-colors">
+                <div class="flex-1">
+                    <div class="flex justify-between items-start mb-1">
+                        <h4 class="font-semibold text-sm text-white line-clamp-1">${item.title}</h4>
+                        <span class="font-bold text-sm text-white">${item.price.toLocaleString()}đ</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <p class="text-xs text-gray-400">${item.quantity} x ${item.price.toLocaleString()}đ</p>
+                        <div class="flex items-center gap-2 bg-background-dark rounded-lg p-1 border border-border-dark">
+                            <button class="w-5 h-5 flex items-center justify-center rounded bg-surface-dark hover:bg-red-900/50 text-gray-300 hover:text-red-400 transition-colors decrease-qty" data-id="${item.id}">
+                                <span class="material-symbols-outlined text-xs">remove</span>
+                            </button>
+                            <span class="text-xs font-bold w-4 text-center text-white">${item.quantity}</span>
+                            <button class="w-5 h-5 flex items-center justify-center rounded bg-surface-dark hover:bg-primary/20 text-gray-300 hover:text-primary transition-colors increase-qty" data-id="${item.id}">
+                                <span class="material-symbols-outlined text-xs">add</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="mt-2 text-xs text-gray-400 italic">Chưa gửi bếp</div>
+                </div>
+            </div>
+        `;
+                list.insertAdjacentHTML('beforeend', itemHtml);
+
+                // Tự động cuộn xuống món vừa thêm (món cuối cùng)
+                if (index === orderItems.length - 1) {
+                    const newItem = document.getElementById(`js-item-${index}`);
+                    if (newItem) {
+                        newItem.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
+                }
+            });
+
+            // Số món chưa gửi bếp (chỉ giỏ JS)
+            document.getElementById('kitchen-count').textContent = orderItems.length;
+
+            // Tính tổng realtime: DB + giỏ JS
+            const dbSubtotal = {{ $dbSubtotal ?? 0 }};
+            const jsSubtotal = subtotal;
+            const totalSubtotal = dbSubtotal + jsSubtotal;
+
+            // Số món tổng (DB + JS)
+            const totalItems = {{ $orderedItems->count() ?? 0 }} + orderItems.length;
+
+            // Cập nhật hiển thị
+            document.getElementById('total-item-count').textContent = totalItems;
+            document.getElementById('total-item-count-bottom').textContent = totalItems;
+            document.getElementById('total-subtotal').textContent = totalSubtotal.toLocaleString() + 'đ';
+
+            const vat = Math.round(totalSubtotal * 0.08);
+            document.getElementById('total-vat').textContent = vat.toLocaleString() + 'đ';
+
+            document.getElementById('grand-total').textContent = (totalSubtotal + vat).toLocaleString() + 'đ';
+        }
+
+        // Hiển thị thống báo
+        function closeSessionAlert() {
+            const alert = document.getElementById('session-alert');
+            if (!alert) return;
+
+            alert.classList.add('opacity-0', 'scale-95');
+            setTimeout(() => alert.remove(), 200);
+        }
+        setTimeout(() => {
+            closeSessionAlert();
+        }, 3000);
+
+        // Tăng/giảm số lượng (delegate event)
+        document.addEventListener('click', e => {
+            if (e.target.closest('.increase-qty')) {
+                const id = e.target.closest('.increase-qty').dataset.id;
+                const item = orderItems.find(i => i.id === id);
+                if (item) item.quantity++;
+                updateOrderSummary();
+            }
+            if (e.target.closest('.decrease-qty')) {
+                const id = e.target.closest('.decrease-qty').dataset.id;
+                const item = orderItems.find(i => i.id === id);
+                if (item && item.quantity > 1) {
+                    item.quantity--;
+                } else if (item) {
+                    orderItems = orderItems.filter(i => i.id !== id);
+                }
+                updateOrderSummary();
+            }
+        });
+
+        document.getElementById('send-to-kitchen-btn')?.addEventListener('click', function () {
+            if (orderItems.length === 0) {
+                return; // Không làm gì nếu giỏ trống (không cần alert)
+            }
+
+            const tableId = {{ $table->id }}; // ID bàn hiện tại
+
+            // Thu thập dữ liệu giỏ hàng
+            const itemsToSend = orderItems.map(item => ({
+                id: item.id,
+                quantity: item.quantity,
+                price: item.price,
+                note: '' // Không cần ghi chú riêng cho món
+            }));
+
+            fetch('/orders/store/' + tableId, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({
+                    items: itemsToSend,
+                    note: '' // Không cần ghi chú chung
+                })
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Server error: ' + response.status);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        // Reload trang để cập nhật trạng thái bàn mới ("Đang dùng") và reset giao diện
+                        location.reload();
+                    } else {
+                        // Không alert, chỉ console lỗi (hoặc bạn có thể thêm alert nếu muốn)
+                        console.error('Lỗi gửi đơn:', data.message || 'Không gửi được đơn');
+                    }
+                })
+                .catch(err => {
+                    console.error('Lỗi kết nối hoặc server trả về HTML:', err);
+                });
+        });
+    </script>
 
 </body>
 

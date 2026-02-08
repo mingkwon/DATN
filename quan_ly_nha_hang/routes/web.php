@@ -24,6 +24,8 @@ Route::get('/delete_booking/{id}', [AdminController::class, 'delete_booking']);
 
 Route::post('/approve_book/{id}', [AdminController::class, 'approve_book'])->name('approve_book');
 
+Route::post('/cancel_booking/{table_id}', [AdminController::class, 'cancelBooking'])->name('cancel_booking');
+
 Route::get('/reject_book/{id}', [AdminController::class, 'reject_book']);
 
 Route::get('/booking-food', [HomeController::class, 'booking_food']);
@@ -36,7 +38,9 @@ Route::get('/booking/{id}/info', [AdminController::class, 'getBookingInfo'])->na
 
 Route::get('/tables/by-type/{type}', [AdminController::class, 'getTablesByType'])->name('tables.by-type');
 
-Route::get('/table_order', [AdminController::class, 'table_order']);
+Route::get('/table_order/{id}', [AdminController::class, 'table_order'])->name('table_order');
+
+Route::post('/orders/store/{table_id}', [AdminController::class, 'storeOrder'])->name('orders.store');
 
 Route::get('/add_food', [AdminController::class, 'add_food']);
 

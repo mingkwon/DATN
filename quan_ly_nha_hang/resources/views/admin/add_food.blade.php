@@ -115,7 +115,8 @@
                     </a>
                     <a class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 transition-colors group"
                         href="{{ url('tables') }}">
-                        <span class="material-symbols-outlined text-gray-400 group-hover:text-white">table_restaurant</span>
+                        <span
+                            class="material-symbols-outlined text-gray-400 group-hover:text-white">table_restaurant</span>
                         <p class="text-gray-300 group-hover:text-white text-sm font-medium">Bàn phục vụ</p>
                     </a>
                     <a class="flex items-center gap-3 px-4 py-3 rounded-xl bg-primary/10 border border-primary/20"
@@ -125,8 +126,7 @@
                     </a>
                     <a class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 transition-colors group"
                         href="{{ url('bookings') }}">
-                        <span
-                            class="material-symbols-outlined text-gray-400 group-hover:text-white">receipt_long</span>
+                        <span class="material-symbols-outlined text-gray-400 group-hover:text-white">receipt_long</span>
                         <p class="text-gray-300 group-hover:text-white text-sm font-medium">Danh sách đặt bàn</p>
                     </a>
                     <a class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 transition-colors group"
@@ -192,7 +192,7 @@
                             <div class="relative group">
                                 <span
                                     class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-primary transition-colors">search</span>
-                                <input
+                                <input id="search-food"
                                     class="w-full bg-surface-dark border border-border-dark text-white text-sm rounded-xl py-3 pl-10 pr-4 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all placeholder:text-gray-600"
                                     placeholder="Tìm kiếm món ăn..." type="text" />
                             </div>
@@ -714,6 +714,24 @@
 
             // Trigger lần đầu khi load trang (để "Tất cả" hoạt động ngay)
             document.querySelector('input[name="category"][checked]')?.dispatchEvent(new Event('change'));
+        });
+
+        // Tìm kiếm món ăn realtime
+        document.getElementById('search-food')?.addEventListener('input', function () {
+            const searchTerm = this.value.toLowerCase().trim();
+
+            // Lấy tất cả card món ăn (có class group và data-type)
+            document.querySelectorAll('.group[data-type]').forEach(card => {
+                const titleElement = card.querySelector('h3');
+                const title = titleElement ? titleElement.textContent.toLowerCase() : '';
+
+                // Nếu tên món chứa từ khóa tìm kiếm → hiển thị, ngược lại ẩn
+                if (title.includes(searchTerm)) {
+                    card.style.display = 'flex';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
         });
     </script>
 </body>

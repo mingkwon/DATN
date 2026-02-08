@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html class="dark" lang="vi">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Thực đơn - Bổ sung món tráng miệng</title>
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600;700;900&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#19e65e",
+                        "background-light": "#f6f8f6",
+                        "background-dark": "#112116",
+                        "surface-dark": "#1c261f",
+                        "surface-light": "#ffffff",
+                        "text-muted": "#9db8a6",
+                    },
+                    fontFamily: {
+                        "display": ["Work Sans", "sans-serif"]
+                    },
+                    borderRadius: { "DEFAULT": "0.5rem", "lg": "1rem", "xl": "1.5rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+</head>
+
+<body
+    class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-white font-display overflow-x-hidden antialiased selection:bg-primary selection:text-black">
+    <div class="flex flex-col min-h-screen">
+        <header
+            class="sticky top-0 z-50 flex items-center justify-between border-b border-[#29382e] bg-[#111813]/95 backdrop-blur-md px-6 py-4 lg:px-10">
+            <div class="flex items-center gap-4 text-white">
+                <div class="size-8 text-primary">
+                    <svg class="w-full h-full" fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+                        <path
+                            d="M24 4C25.7818 14.2173 33.7827 22.2182 44 24C33.7827 25.7818 25.7818 33.7827 24 44C22.2182 33.7827 14.2173 25.7818 4 24C14.2173 22.2182 22.2182 14.2173 24 4Z"
+                            fill="currentColor"></path>
+                    </svg>
+                </div>
+                <h2 class="text-white text-xl font-bold leading-tight tracking-[-0.015em]">Laravel Restaurant</h2>
+            </div>
+            <div class="hidden lg:flex flex-1 justify-center gap-8">
+                <nav class="flex items-center gap-9">
+                    <a class="text-white hover:text-primary transition-colors text-sm font-medium leading-normal"
+                        href="#">Trang chủ</a>
+                    <a class="text-white hover:text-primary transition-colors text-sm font-medium leading-normal"
+                        href="#">Về chúng tôi</a>
+                    <a class="text-primary text-sm font-medium leading-normal" href="#">Thực đơn</a>
+                    <a class="text-white hover:text-primary transition-colors text-sm font-medium leading-normal"
+                        href="#">Liên hệ</a>
+                </nav>
+            </div>
+            <div class="flex items-center gap-4">
+                <div class="bg-center bg-no-repeat bg-cover rounded-full size-10 ring-2 ring-primary/20"
+                    data-alt="User profile avatar showing a smiling person"
+                    style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBeug52M1OrxOSXDjt7iKOHyib_0Bm8n_07qRgWqy2gtFILFcMIF7KfPZaJX3pDgY1bi2UrWmOAGy5qAUqGSbhQQo0D-vgoM9qpg6t5ku9rHW5VrykJg7i86UDqz31_R3ZhaIPGJWiFu9oVDukMQ3gd_Pa7CG2Lv4kr4VO9BNAY31lmHjdYRwYugaMYiIjSvaHH3i2yV_Jtpi8F_aAMAGX6BnLTJ03tTnJIliyUPfWHXi5I_o2NuiE8LyR1xmikjkZIqOQVL6WgBhY");'>
+                </div>
+            </div>
+        </header>
+        <main class="flex-1 w-full max-w-[1600px] mx-auto p-4 lg:p-6 flex flex-col gap-8">
+            <div class="w-full flex flex-col gap-8">
+                <div class="flex flex-col gap-6">
+                    <div class="flex flex-wrap justify-between items-end gap-4">
+                        <div class="flex flex-col gap-2">
+                            <h1 class="text-white text-3xl lg:text-4xl font-black leading-tight tracking-[-0.033em]">
+                                Thực đơn nhà hàng</h1>
+                            <div class="flex items-center gap-2 text-text-muted">
+                                <span class="material-symbols-outlined text-primary text-sm">restaurant_menu</span>
+                                <p class="text-base font-normal">Danh sách món ăn &amp; Đồ uống</p>
+                            </div>
+                        </div>
+                        <div class="w-full sm:max-w-xs">
+                            <label
+                                class="flex w-full items-center rounded-xl bg-surface-dark border border-[#29382e] focus-within:border-primary/50 transition-colors h-12 px-4 gap-3">
+                                <span class="material-symbols-outlined text-text-muted">search</span>
+                                <input
+                                    class="w-full bg-transparent border-none text-white placeholder:text-text-muted focus:ring-0 p-0 text-base"
+                                    placeholder="Tìm món ăn..." />
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <section class="flex flex-col gap-4">
+                    <div class="flex items-center gap-2">
+                        <span class="material-symbols-outlined text-primary filled">auto_awesome</span>
+                        <h3 class="text-white text-lg font-bold">Gợi ý từ AI Chef</h3>
+                    </div>
+                    <div
+                        class="flex overflow-x-auto pb-4 gap-4 snap-x [-ms-scrollbar-style:none] [scrollbar-width:none] [&amp;::-webkit-scrollbar]:hidden">
+                        <div
+                            class="snap-start min-w-[280px] md:min-w-[320px] bg-surface-dark rounded-xl p-3 border border-[#29382e] hover:border-primary/30 transition-all group flex flex-col gap-3">
+                            <div class="relative w-full aspect-video rounded-lg overflow-hidden">
+                                <div class="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-110"
+                                    data-alt="Plate of premium Wagyu beef steak perfectly seared"
+                                    style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBDKVGfhjAU-vDOsfHqiU_DDjeSukE3D_o17Unr676QBj4ZX5HqAqaqfWg5KUfOSrNBF6bWDsbyBYCFHFm-YPfPHeRd9cgnOcu9QT_xataeG3JUuPvyI-SSzfn21HpZmlTOSWpITZl0No-BGB3MSjvMppomOIMjU_DDXj8GL3l0dCJDXTHnpoB_wI5C3WPxc2tDa6cSqjkaYkGKnLTbJjbQRAcjVFapBpiLZDYZSgu9cnwRLW3sbPBV4eQZZhXi6DNpDZHaK-Oyvg8");'>
+                                </div>
+                                <div
+                                    class="absolute top-2 left-2 bg-primary/90 text-black text-xs font-bold px-2 py-1 rounded">
+                                    Top Choice</div>
+                            </div>
+                            <div class="flex flex-col gap-1">
+                                <h4 class="text-white font-bold text-lg">Combo Bò Wagyu</h4>
+                                <p class="text-text-muted text-sm line-clamp-2">Thịt bò A5 mềm tan, kèm khoai tây nghiền
+                                    và sốt nấm truffle.</p>
+                            </div>
+                            <div class="flex items-center justify-between mt-auto pt-2">
+                                <span class="text-primary font-bold text-lg">1.250.000₫</span>
+                            </div>
+                        </div>
+                        <div
+                            class="snap-start min-w-[280px] md:min-w-[320px] bg-surface-dark rounded-xl p-3 border border-[#29382e] hover:border-primary/30 transition-all group flex flex-col gap-3">
+                            <div class="relative w-full aspect-video rounded-lg overflow-hidden">
+                                <div class="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-110"
+                                    data-alt="Fresh assorted sashimi platter on ice"
+                                    style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAyc-RuWYbUefokogaCUzSCmm9vXTdaZRLYYkUc9XnekUnwXCOLHA3j1GTvrYSgpO3_Cl6Lx_t8Bh9KesoVWvFIsr2rYDKbRLaDcocMFcjhKJKDIvmmG8un3d13NOLEp53gckF6mmWsuRcZpEwlYqHL17j5lrZUxtG2tNfL4Q2U9l_z2G7xHLKQJqDewUqI5pLdd56QC678-WqP6uoTvazCWo_zAk_B4J62bV_cwFbUaH0NyaF0vAX8gekWUjwoS0P_QPKClE48NLY");'>
+                                </div>
+                                <div
+                                    class="absolute top-2 left-2 bg-purple-500/90 text-white text-xs font-bold px-2 py-1 rounded">
+                                    Best Seller</div>
+                            </div>
+                            <div class="flex flex-col gap-1">
+                                <h4 class="text-white font-bold text-lg">Sashimi Tổng Hợp</h4>
+                                <p class="text-text-muted text-sm line-clamp-2">Cá hồi, cá ngừ, bạch tuộc tươi sống nhập
+                                    khẩu trong ngày.</p>
+                            </div>
+                            <div class="flex items-center justify-between mt-auto pt-2">
+                                <span class="text-primary font-bold text-lg">890.000₫</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                <div
+                    class="flex gap-3 overflow-x-auto pb-2 [-ms-scrollbar-style:none] [scrollbar-width:none] [&amp;::-webkit-scrollbar]:hidden">
+                    <button
+                        class="shrink-0 h-10 px-5 rounded-full bg-surface-dark text-white border border-[#29382e] hover:border-primary/50 font-medium text-sm transition-all active:scale-95">Tất
+                        cả</button>
+                    <button
+                        class="shrink-0 h-10 px-5 rounded-full bg-surface-dark text-white border border-[#29382e] hover:border-primary/50 font-medium text-sm transition-all active:scale-95">Khai
+                        vị</button>
+                    <button
+                        class="shrink-0 h-10 px-5 rounded-full bg-surface-dark text-white border border-[#29382e] hover:border-primary/50 font-medium text-sm transition-all active:scale-95">Món
+                        chính</button>
+                    <button
+                        class="shrink-0 h-10 px-5 rounded-full bg-primary text-black font-semibold text-sm transition-transform active:scale-95">Tráng
+                        miệng</button>
+                    <button
+                        class="shrink-0 h-10 px-5 rounded-full bg-surface-dark text-white border border-[#29382e] hover:border-primary/50 font-medium text-sm transition-all active:scale-95">Đồ
+                        uống</button>
+                    <button
+                        class="shrink-0 h-10 px-5 rounded-full bg-surface-dark text-white border border-[#29382e] hover:border-primary/50 font-medium text-sm transition-all active:scale-95">Món
+                        chay</button>
+                </div>
+                <div class="flex items-center gap-3">
+                    <div class="h-px flex-1 bg-[#29382e]"></div>
+                    <h3 class="text-text-muted text-sm font-bold uppercase tracking-widest">Danh mục Tráng Miệng</h3>
+                    <div class="h-px flex-1 bg-[#29382e]"></div>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                    <div
+                        class="group bg-surface-dark rounded-xl overflow-hidden border border-[#29382e] hover:shadow-lg hover:shadow-primary/5 transition-all">
+                        <div class="h-48 overflow-hidden relative">
+                            <div class="w-full h-full bg-cover bg-center transition-transform duration-700 group-hover:scale-105"
+                                style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuC3YpVDuKgh1-yjoZcHDzawrlstUssfDqHTPkvUvRkZO88hlJ0tdFWEyYDo6feCI8U-pBoLN6o-X8qH6jwEqqMRiEDtgbVbLER5DrmwmTog9NmmF4-1M70U4CtTvPqauR4eT5as1-Sh-1r96FOxzaSPUt8zaxVJ4dkg_WUnj5u10ch93LJ0-QEeceyFrB0lJ-tZ2HhvWmP6zHf293CXU5RZR0LPrR98yy5m4AtKYXCgvnmSzganAY6jsfAUYt83zrXwwRHjrnDh8AI");'>
+                            </div>
+                            <div class="absolute top-3 right-3">
+                                <button
+                                    class="size-8 rounded-full bg-black/50 backdrop-blur text-white flex items-center justify-center hover:bg-primary hover:text-black transition-colors">
+                                    <span class="material-symbols-outlined text-lg">favorite</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="p-4 flex flex-col gap-3">
+                            <h4 class="text-white font-bold text-lg leading-snug">Bánh Tiramisu Truyền Thống</h4>
+                            <p class="text-text-muted text-sm line-clamp-2 h-10">Lớp kem béo ngậy quyện cùng hương cà
+                                phê Espresso và cacao đậm đà.</p>
+                            <div class="mt-2">
+                                <span class="text-primary font-bold text-xl">125.000₫</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div
+                        class="group bg-surface-dark rounded-xl overflow-hidden border border-[#29382e] hover:shadow-lg hover:shadow-primary/5 transition-all">
+                        <div class="h-48 overflow-hidden relative">
+                            <div class="w-full h-full bg-cover bg-center transition-transform duration-700 group-hover:scale-105"
+                                style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBm_7Aq6VGe5-9BdOOM19XQ5rrIigJdgFrsjiUXutTU38pYCkrL3qe3EV-Wc6cKkecTn3P8yA5Zu3EeTCbxxFUa0dazM0AEaZHuKz14s-R-RlmiNpceGbRE1TDZSWG5vqSP04LPvWXLEpoWgtmmQjIKNk3CmVI_kfnBxtGmr8SD4ooq7PYiONduOazB6FOsjcAGjoE1ThryXFQG0vClFkpUQAx801tNcfb18sQYGGZdjmVgIBWHaV6bWsZcZin_8jVbM4djEu3beUo");'>
+                            </div>
+                        </div>
+                        <div class="p-4 flex flex-col gap-3">
+                            <h4 class="text-white font-bold text-lg leading-snug">Kem Ý Gelato</h4>
+                            <p class="text-text-muted text-sm line-clamp-2 h-10">Đa dạng hương vị từ trái cây nhiệt đới
+                                đến sô-cô-la nguyên chất.</p>
+                            <div class="mt-2">
+                                <span class="text-primary font-bold text-xl">85.000₫</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div
+                        class="group bg-surface-dark rounded-xl overflow-hidden border border-[#29382e] hover:shadow-lg hover:shadow-primary/5 transition-all">
+                        <div class="h-48 overflow-hidden relative">
+                            <div class="w-full h-full bg-cover bg-center transition-transform duration-700 group-hover:scale-105"
+                                style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuC5hZzt0rFeC2U7Fl_aJdWrzDfP1TQB8qtvVnnJKMugWdQpckAUkFaEudnf60tJ7KPUWwFzWYt4GYfeMzJXBiNTaFQ0J9RAsyX0AALpFWR0IKxI9AmHx27yKGki69WLV5Ef0BxG0W7cGVMAF6u97KY5CHXLEzYxhTK-lrCSJP86msPgrnntwuau1BS3pAr2GxJFMSi0weVIBhrkarAuSBsTFk_MhjsJf18lU1vA9f_tPnMvoyhTU9CUBM8KPPrEX45pxwvlssHef40");'>
+                            </div>
+                        </div>
+                        <div class="p-4 flex flex-col gap-3">
+                            <h4 class="text-white font-bold text-lg leading-snug">Chè Khúc Bạch</h4>
+                            <p class="text-text-muted text-sm line-clamp-2 h-10">Thanh mát với thạch sữa, hạnh nhân rang
+                                giòn và nhãn tươi ngọt lịm.</p>
+                            <div class="mt-2">
+                                <span class="text-primary font-bold text-xl">65.000₫</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div
+                        class="group bg-surface-dark rounded-xl overflow-hidden border border-[#29382e] hover:shadow-lg hover:shadow-primary/5 transition-all">
+                        <div class="h-48 overflow-hidden relative">
+                            <div class="w-full h-full bg-cover bg-center transition-transform duration-700 group-hover:scale-105"
+                                style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDXTMATfZTLGBCKZq75gdniwaqNjDFcfLGg8c7Y-ROWVArkKWVAyjQu8_SBHZfBkoXZq0WmHzik4kyKgGbS5RE2IJwsvgohWSRqdb51VfEBwNzaYTMzErzrSE2vFABZmjcqhW5Nusa0_XuIo_Nb_HUK_fCHEjNqEDNNm7aPzuBflkFVxJnMH5bp4tp8xRUMrU-Lai4tUhNv6Nd7VrxJOwdRmmB2iDpymabw-b8OnbuFqhneEbRwOEb6EXFd_wacmlxyN0wHdUa3gOc");'>
+                            </div>
+                        </div>
+                        <div class="p-4 flex flex-col gap-3">
+                            <h4 class="text-white font-bold text-lg leading-snug">Mochi Nhật Bản</h4>
+                            <p class="text-text-muted text-sm line-clamp-2 h-10">Vỏ bánh dẻo mịn với nhân đậu đỏ truyền
+                                thống ngọt dịu tinh tế.</p>
+                            <div class="mt-2">
+                                <span class="text-primary font-bold text-xl">75.000₫</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div
+                        class="group bg-surface-dark rounded-xl overflow-hidden border border-[#29382e] hover:shadow-lg hover:shadow-primary/5 transition-all">
+                        <div class="h-48 overflow-hidden relative">
+                            <div class="w-full h-full bg-cover bg-center transition-transform duration-700 group-hover:scale-105"
+                                data-alt="Delicious chocolate lava cake"
+                                style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBkWkprFIxjD4NjgMR0YFTnIRP_I6lRCOYlQlPTvhe2AjVOjR4RxGbwz8JIf6dc1a5lBznY7zEJjaJvvXh7kwoNh3HbF7bs3U4Vc7OJ_Eo2MS_DGMgG1yTa4HsfcbuXeDV8ky_bl7YO2ElId1ftrgC2XKjPfQwGoiQ8FhIdtfxzXmcruyxTI4PIUUal04nacLQ80urTj1G-C6YKq8ntM0VXIpd98aZnWb09f_6JLf2BpWfDEj8RErS9JkXkVw6kca4J-yO18D-gW00");'>
+                            </div>
+                        </div>
+                        <div class="p-4 flex flex-col gap-3">
+                            <h4 class="text-white font-bold text-lg leading-snug">Bánh Chocolate Lava</h4>
+                            <p class="text-text-muted text-sm line-clamp-2 h-10">Bánh sô-cô-la tan chảy, ăn kèm một viên
+                                kem vani.</p>
+                            <div class="mt-2">
+                                <span class="text-primary font-bold text-xl">150.000₫</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div
+                        class="group bg-surface-dark rounded-xl overflow-hidden border border-[#29382e] hover:shadow-lg hover:shadow-primary/5 transition-all">
+                        <div class="h-48 overflow-hidden relative">
+                            <div class="w-full h-full bg-cover bg-center transition-transform duration-700 group-hover:scale-105"
+                                data-alt="Plate of grilled salmon with asparagus"
+                                style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCD9UvQbV6ic9KymRd2qxtpDDr_mbDFVmncg8R7tPPGxREAHjG1AJK7-wkPs9ha4GZ6qIwOBxJJ2y9TSear5Y0wmU3aNLKq2hRLNMLNpMmQJZF55gNwOyG9cVGbUv7tgQMfN3RhCLfigZsnDj8Op0oN6m2Eoi4fP1nln2m5Lhrae1XXZK3B_M6Y5kgfnt1XMDL6UAlSTqffNY5D6TGGxvZmE5lYaa5TTXkxSzS126IfsuvJ97aWbYpLft1eUaPau5JUbWODcjGf5Uc");'>
+                            </div>
+                        </div>
+                        <div class="p-4 flex flex-col gap-3">
+                            <h4 class="text-white font-bold text-lg leading-snug">Cá Hồi Nướng Sốt Cam</h4>
+                            <p class="text-text-muted text-sm line-clamp-2 h-10">Cá hồi phi lê nướng da giòn, sốt cam
+                                tươi chua ngọt, ăn kèm măng tây.</p>
+                            <div class="mt-2">
+                                <span class="text-primary font-bold text-xl">250.000₫</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+</body>
+
+</html>

@@ -5,9 +5,10 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class Order_Items extends Model
+class OrderItems extends Model
 {
     use HasFactory;
+    protected $table = 'order_items';
     protected $fillable = [
         'order_id',
         'food_id',                // FK → foods.id
@@ -16,4 +17,9 @@ class Order_Items extends Model
         'ghi_chu_mon',              // ít đá, không hành, thêm ớt...
         'trang_thai_mon',           // 'cho_lam', 'dang_lam', 'da_phuc_vu', 'huy'
     ];
+
+    public function food()
+    {
+        return $this->belongsTo(Food::class, 'food_id', 'id');
+    }
 }

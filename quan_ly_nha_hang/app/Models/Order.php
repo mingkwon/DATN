@@ -21,4 +21,9 @@ class Order extends Model
         'tong_thanh_toan',
         'ghi_chu_don',
     ];
+
+    public function orderItems()
+    {
+        return $this->hasMany(OrderItems::class, 'order_id');
+    }
 }

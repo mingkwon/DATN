@@ -133,26 +133,24 @@
 
             <div>
                 @if(session()->has('message'))
-                    <div id="session-alert" class="flex items-start gap-3 px-5 py-4 rounded-xl
-                                                               bg-primary/10 border border-primary/30
-                                                               text-primary text-sm font-semibold
-                                                               shadow-lg shadow-primary/20
-                                                               animate-fade-in relative">
+                    <div id="session-alert" class="fixed left-1/2 top-4 -translate-x-1/2 z-[1000]
+                                 flex items-center gap-3 px-6 py-3 rounded-xl
+                                 bg-[#0f172a] border border-primary/30
+                                 text-slate-100 text-sm font-medium
+                                 shadow-2xl animate-fade-in-up">
 
-                        <span class="material-symbols-outlined text-primary mt-0.5">
+                        <span class="material-symbols-outlined text-xl text-primary flex-shrink-0">
                             check_circle
                         </span>
 
-                        <span class="flex-1 leading-relaxed">
-                            {{ session()->get('message') }}
+                        <span class="leading-tight">
+                            {{ session('message') }}
                         </span>
 
-                        <!-- Close button -->
-                        <button type="button" aria-label="Đóng thông báo" onclick="closeSessionAlert()" class="ml-2 flex items-center justify-center
-                                                                   w-8 h-8 rounded-full
-                                                                   text-primary/70 hover:text-primary
-                                                                   hover:bg-primary/20
-                                                                   transition">
+                        <button type="button" aria-label="Đóng" onclick="closeSessionAlert()" class="ml-2 flex items-center justify-center
+                                           w-7 h-7 rounded-full
+                                           bg-white/10 hover:bg-white/20
+                                           text-slate-200 transition-all duration-200">
                             <span class="material-symbols-outlined text-lg">close</span>
                         </button>
                     </div>
@@ -177,7 +175,7 @@
             }
             setTimeout(() => {
                 closeSessionAlert();
-            }, 4000);
+            }, 3000);
         </script>
 
 
@@ -218,7 +216,8 @@
                                     <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                                         <span class="material-symbols-outlined text-gray-500">phone_iphone</span>
                                     </div>
-                                    <input name="phone" id="phone-number" type="tel" required pattern="[0-9]{9,11}" minlength="9" maxlength="11"
+                                    <input name="phone" id="phone-number" type="tel" required pattern="[0-9]{9,11}"
+                                        minlength="9" maxlength="11"
                                         class="w-full bg-[#161e18] border border-surface-border rounded-xl py-3.5 pl-12 pr-4 text-white focus:border-primary focus:ring-1 focus:ring-primary placeholder-gray-500 transition-colors outline-none invalid:border-red-500 invalid:ring-red-500/50"
                                         placeholder="Nhập số điện thoại" title="Số điện thoại từ 9-11 số" />
                                 </div>
