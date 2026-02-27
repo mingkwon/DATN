@@ -57,9 +57,7 @@
                     <a class="text-[#637588] dark:text-[#9db8a6] text-sm font-medium leading-normal hover:text-primary transition-colors"
                         href="{{ url('booking-table') }}">Đặt bàn</a>
                     <a class="text-[#637588] dark:text-[#9db8a6] text-sm font-medium leading-normal hover:text-primary transition-colors"
-                        href="#">Ưu đãi</a>
-                    <a class="text-[#637588] dark:text-[#9db8a6] text-sm font-medium leading-normal hover:text-primary transition-colors"
-                        href="#">Giới thiệu</a>
+                        href="{{ url('intro') }}">Giới thiệu</a>
                 </nav>
             </div>
             <div class="flex flex-1 justify-end gap-6 items-center">

@@ -2,6 +2,7 @@
 <html class="dark" lang="vi">
 
 <head>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <title>Quản lý đặt bàn - Restaurant Manager</title>
@@ -64,6 +65,28 @@
 </head>
 
 <body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-white font-display overflow-hidden">
+    <!-- Modal xác nhận hủy đặt bàn -->
+    <div id="cancel-booking-modal"
+        class="fixed inset-0 z-50 hidden items-center justify-center bg-black/70 backdrop-blur-sm p-4">
+        <div class="bg-surface-dark border border-border-dark rounded-2xl shadow-2xl p-8 max-w-md w-full text-center">
+            <h3 class="text-2xl font-bold text-white mb-4">Xác nhận hủy đặt bàn</h3>
+            <p class="text-gray-300 mb-8">Bạn chắc chắn muốn hủy đặt bàn này? Hành động không thể hoàn tác.</p>
+
+            <div class="flex justify-center gap-4">
+                <!-- Nút Hủy (đóng modal) -->
+                <button id="close-cancel-modal"
+                    class="px-6 py-3 bg-surface-dark border border-border-dark text-gray-300 font-bold rounded-xl hover:bg-white/5 transition-all">
+                    Không hủy
+                </button>
+
+                <!-- Nút Xác nhận hủy -->
+                <button id="confirm-cancel-btn"
+                    class="px-6 py-3 bg-red-600 text-white font-bold rounded-xl hover:bg-red-700 transition-all shadow-[0_0_15px_rgba(239,68,68,0.3)]">
+                    Có, hủy đặt bàn
+                </button>
+            </div>
+        </div>
+    </div>
     <div id="add-booking-modal"
         class="fixed inset-0 z-50 hidden items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-fade-in">
         <form id="booking-form" action="{{ url('book_table') }}" method="POST">
@@ -434,37 +457,53 @@
                 </div>
                 <div class="h-px bg-border-dark my-1"></div>
                 <div class="flex flex-col gap-1">
-                    <a class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 transition-colors group"
-                        href="{{ url('home') }}">
-                        <span class="material-symbols-outlined text-gray-400 group-hover:text-white">dashboard</span>
-                        <p class="text-gray-300 group-hover:text-white text-sm font-medium">Tổng quan</p>
-                    </a>
-                    <a class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 transition-colors group"
+                    @if(Auth::user()->usertype === 'admin')
+                        <!-- Chỉ admin thấy Tổng quan -->
+                        <a class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 transition-colors group"
+                            href="{{ url('home') }}">
+                            <span class="material-symbols-outlined text-gray-400 group-hover:text-white">dashboard</span>
+                            <p class="text-gray-300 group-hover:text-white text-sm font-medium">Tổng quan</p>
+                        </a>
+                    @endif
+
+                    <!-- Luôn hiển thị cho cả admin và staff -->
+                    <!-- Bàn phục vụ -->
+                    <a class="flex items-center gap-3 px-4 py-3 rounded-xl {{ request()->is('tables') || request()->is('table_order/*') ? 'bg-primary/10 border border-primary/20' : 'hover:bg-white/5' }} transition-colors group"
                         href="{{ url('tables') }}">
                         <span
-                            class="material-symbols-outlined text-gray-400 group-hover:text-white">table_restaurant</span>
-                        <p class="text-gray-300 group-hover:text-white text-sm font-medium">Bàn phục vụ</p>
+                            class="material-symbols-outlined {{ request()->is('tables') || request()->is('table_order/*') ? 'text-primary fill-1' : 'text-gray-400 group-hover:text-white' }}">table_restaurant</span>
+                        <p
+                            class="{{ request()->is('tables') || request()->is('table_order/*') ? 'text-primary font-bold' : 'text-gray-300 group-hover:text-white' }} text-sm">
+                            Bàn phục vụ
+                        </p>
                     </a>
-                    <a class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 transition-colors group"
-                        href="{{ url('add_food') }}">
-                        <span class="material-symbols-outlined text-gray-400 group-hover:text-white">restaurant</span>
-                        <p class="text-gray-300 group-hover:text-white text-sm font-medium">Quản lý thực đơn</p>
+
+                    <!-- Danh sách đặt bàn - Active khi ở trang bookings -->
+                    <a class="flex items-center gap-3 px-4 py-3 rounded-xl {{ request()->is('bookings') ? 'bg-primary/10 border border-primary/20' : 'hover:bg-white/5' }} transition-colors group"
+                        href="{{ url('bookings') }}">
+                        <span
+                            class="material-symbols-outlined {{ request()->is('bookings') ? 'text-primary fill-1' : 'text-gray-400 group-hover:text-white' }}">receipt_long</span>
+                        <p
+                            class="{{ request()->is('bookings') ? 'text-primary font-bold' : 'text-gray-300 group-hover:text-white' }} text-sm">
+                            Danh sách đặt bàn
+                        </p>
                     </a>
-                    <a class="flex items-center gap-3 px-4 py-3 rounded-xl bg-primary/10 border border-primary/20"
-                        href="#">
-                        <span class="material-symbols-outlined text-primary fill-1">receipt_long</span>
-                        <p class="text-primary text-sm font-bold">Danh sách đặt bàn</p>
-                    </a>
-                    <a class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 transition-colors group"
-                        href="#">
-                        <span class="material-symbols-outlined text-gray-400 group-hover:text-white">inventory_2</span>
-                        <p class="text-gray-300 group-hover:text-white text-sm font-medium">Kho hàng</p>
-                    </a>
-                    <a class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 transition-colors group"
-                        href="#">
-                        <span class="material-symbols-outlined text-gray-400 group-hover:text-white">settings</span>
-                        <p class="text-gray-300 group-hover:text-white text-sm font-medium">Cài đặt</p>
-                    </a>
+
+                    @if(Auth::user()->usertype === 'admin')
+                        <!-- Chỉ admin thấy Quản lý thực đơn -->
+                        <a class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 transition-colors group"
+                            href="{{ url('add_food') }}">
+                            <span class="material-symbols-outlined text-gray-400 group-hover:text-white">restaurant</span>
+                            <p class="text-gray-300 group-hover:text-white text-sm font-medium">Quản lý thực đơn</p>
+                        </a>
+
+                        <!-- Chỉ admin thấy Cài đặt -->
+                        <a class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 transition-colors group"
+                            href="{{ url('setting') }}">
+                            <span class="material-symbols-outlined text-gray-400 group-hover:text-white">settings</span>
+                            <p class="text-gray-300 group-hover:text-white text-sm font-medium">Cài đặt</p>
+                        </a>
+                    @endif
                 </div>
             </div>
             <div class="p-4">
@@ -554,12 +593,11 @@
                         <div>
                             @if(session()->has('message'))
                                 <div id="session-alert" class="fixed left-1/2 top-4 -translate-x-1/2 z-[1000]
-                                     flex items-center gap-3 px-6 py-3 rounded-xl
-                                     bg-[#0f172a] border border-primary/30
-                                     text-slate-100 text-sm font-medium
-                                     shadow-2xl animate-fade-in-up">
-
-                                    <span class="material-symbols-outlined text-xl text-primary flex-shrink-0">
+                                                                                        flex items-center gap-3 px-6 py-3 rounded-xl
+                                                                                        bg-[#D8ECDA] border border-primary/30
+                                                                                        text-[#275626] text-sm font-medium
+                                                                                        shadow-2xl animate-fade-in-up">
+                                    <span class="material-symbols-outlined text-xl text-[#275626] flex-shrink-0">
                                         check_circle
                                     </span>
 
@@ -568,9 +606,10 @@
                                     </span>
 
                                     <button type="button" aria-label="Đóng" onclick="closeSessionAlert()" class="ml-2 flex items-center justify-center
-                                               w-7 h-7 rounded-full
-                                               bg-white/10 hover:bg-white/20
-                                               text-slate-200 transition-all duration-200">
+                                                                                           w-7 h-7 rounded-full
+                                                                                           text-[#275626]
+                                                                                           bg-[#9FB8A0]/20 hover:bg-[#9FB8A0]/40
+                                                                                           transition-all duration-200">
                                         <span class="material-symbols-outlined text-lg">close</span>
                                     </button>
                                 </div>
@@ -698,7 +737,10 @@
                                     <tbody class="divide-y divide-border-dark">
                                         <tr class="group hover:bg-white/5 transition-colors">
                                             <td class="px-6 py-4">
-                                                <p class="text-white text-sm font-semibold">{{ $booking->name }}</p>
+                                                <p
+                                                    class="text-white text-sm font-semibold break-words whitespace-normal leading-relaxed max-w-[180px]">
+                                                    {{ $booking->name }}
+                                                </p>
                                             </td>
 
                                             <td class="px-6 py-4 text-sm text-gray-300">{{ $booking->phone }}</td>
@@ -750,6 +792,8 @@
                                                         'Chờ xác nhận' => 'size-1.5 rounded-full bg-yellow-500 animate-pulse',
                                                         'Đã xác nhận' => 'size-1.5 rounded-full bg-primary',
                                                         'Chờ khách' => 'size-1.5 rounded-full bg-primary',
+                                                        'Đã đến' => 'size-1.5 rounded-full bg-green-500',
+                                                        'Hoàn thành' => 'size-1.5 rounded-full bg-green-600',
                                                         'Đã quá hạn' => 'size-1.5 rounded-full bg-red-500',
                                                         'Đã hủy' => 'size-1.5 rounded-full bg-red-500',
                                                         default => 'size-1.5 rounded-full bg-gray-400',
@@ -770,10 +814,10 @@
                                                 <div class="flex items-center justify-end gap-2">
 
                                                     {{-- ❌ CHỈ ĐƯỢC XÓA --}}
-                                                    @if(in_array($status, ['Đã quá hạn', 'Đã hủy']))
+                                                    @if(in_array($status, ['Đã quá hạn', 'Đã hủy', 'Đã đến', 'Hoàn thành']))
 
                                                         <button
-                                                            class="p-2 rounded-lg text-red-500 hover:bg-red-500/10 transition-all"
+                                                            class="p-2 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-500/10 transition-all"
                                                             onclick="openDeleteModal({{ $booking->id }})" title="Xóa">
                                                             <span class="material-symbols-outlined text-lg">delete</span>
                                                         </button>
@@ -791,11 +835,11 @@
                                                         @endif
 
                                                         {{-- HỦY --}}
-                                                        <a href="{{ url('reject_book', $booking->id) }}"
+                                                        <button onclick="openCancelBookingModal({{ $booking->id }})"
                                                             class="p-2 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-500/10 transition-all"
                                                             title="Hủy bàn">
                                                             <span class="material-symbols-outlined text-lg">close</span>
-                                                        </a>
+                                                        </button>
 
                                                         {{-- XÓA --}}
                                                         <button
@@ -917,6 +961,7 @@
             });
 
         // Gán bàn
+        // Gán bàn
         let currentBookingId = null;
         let preferredTableType = 'Tiêu chuẩn'; // mặc định
 
@@ -962,8 +1007,8 @@
                         }
                     });
 
-                    // Load danh sách bàn theo loại mặc định
-                    loadTables(preferredTableType);
+                    // Load bàn với bookingId để lọc đúng khung giờ
+                    loadTables(preferredTableType, bookingId);
                 })
                 .catch(err => {
                     console.error(err);
@@ -971,9 +1016,14 @@
                 });
         }
 
-        // Hàm load bàn từ DB theo loại
-        function loadTables(type) {
-            fetch(`/tables/by-type/${encodeURIComponent(type)}`)
+        // Hàm load bàn từ DB theo loại + bookingId (để lọc xung đột giờ)
+        function loadTables(type, bookingId = null) {
+            let url = `/tables/by-type/${encodeURIComponent(type)}`;
+            if (bookingId) {
+                url += `/${bookingId}`;
+            }
+
+            fetch(url)
                 .then(res => res.json())
                 .then(tables => {
                     const grid = document.getElementById('table-grid');
@@ -986,10 +1036,9 @@
 
                     tables.forEach(table => {
                         let bgClass = '';
-                        let borderClass = '';
                         let iconColor = 'text-gray-400';
+                        let iconName = 'table_restaurant';
                         let statusText = '';
-                        let iconName = 'table_restaurant'; // mặc định
 
                         const status = table.status?.toLowerCase() || 'trống';
 
@@ -1000,18 +1049,18 @@
                         } else if (status === 'đang dùng') {
                             bgClass = 'opacity-60 cursor-not-allowed bg-yellow-500/5 border border-yellow-500/20';
                             iconColor = 'text-yellow-500';
-                            iconName = 'restaurant'; // icon bạn dùng cho đang dùng
+                            iconName = 'restaurant';
                             statusText = '<p class="text-yellow-500 text-[10px] font-medium">Đang dùng</p>';
                         } else if (status === 'đã đặt') {
                             bgClass = 'opacity-60 cursor-not-allowed bg-blue-500/5 border border-blue-500/20';
                             iconColor = 'text-blue-500';
-                            iconName = 'event_seat'; // icon bạn dùng cho đã đặt
+                            iconName = 'event_seat';
                             statusText = '<p class="text-blue-500 text-[10px] font-medium">Đã đặt</p>';
                         }
 
                         const div = document.createElement('div');
                         div.className = `group relative flex flex-col items-center justify-center gap-3 p-5 rounded-2xl ${bgClass} transition-all`;
-                        div.dataset.tableId = table.id; // để sau này gửi id bàn khi xác nhận (nếu cần)
+                        div.dataset.tableId = table.id;
 
                         div.innerHTML = `
                     <span class="material-symbols-outlined ${iconColor} text-3xl">${iconName}</span>
@@ -1021,7 +1070,6 @@
                     </div>
                 `;
 
-                        // Nếu bàn trống → thêm sự kiện click để chọn
                         if (status === 'trống') {
                             div.addEventListener('click', () => {
                                 // Xóa check cũ
@@ -1031,7 +1079,6 @@
                                     if (oldCheck) oldCheck.remove();
                                 });
 
-                                // Thêm check + style cho bàn được chọn
                                 div.classList.add('bg-primary/20', 'border-2', 'border-primary', 'shadow-[0_0_15px_rgba(25,230,94,0.3)]');
 
                                 const checkDiv = document.createElement('div');
@@ -1182,6 +1229,65 @@
             if (this.value.length > 11) {
                 this.value = this.value.slice(0, 11);
             }
+        });
+
+
+        let currentCancelBookingId = null;
+
+        function openCancelBookingModal(bookingId) {
+            currentCancelBookingId = bookingId;
+            document.getElementById('cancel-booking-modal').classList.remove('hidden');
+            document.getElementById('cancel-booking-modal').classList.add('flex');
+        }
+
+        // Đóng modal
+        document.getElementById('close-cancel-modal')?.addEventListener('click', () => {
+            document.getElementById('cancel-booking-modal').classList.add('hidden');
+            document.getElementById('cancel-booking-modal').classList.remove('flex');
+            currentCancelBookingId = null;
+        });
+
+        // Xác nhận hủy → gửi POST
+        document.getElementById('confirm-cancel-btn')?.addEventListener('click', () => {
+            if (!currentCancelBookingId) return;
+
+            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+            if (!csrfToken) {
+                alert('Lỗi: Không tìm thấy CSRF token. Vui lòng reload trang.');
+                return;
+            }
+
+            fetch(`/reject_book/${currentCancelBookingId}`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': csrfToken,
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({})
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`Lỗi server: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        // Đóng modal
+                        document.getElementById('cancel-booking-modal').classList.add('hidden');
+                        document.getElementById('cancel-booking-modal').classList.remove('flex');
+
+                        // Reload trang để cập nhật trạng thái
+                        location.reload();
+                    } else {
+                        alert('Lỗi: ' + (data.message || 'Không thể hủy đặt bàn'));
+                    }
+                })
+                .catch(err => {
+                    console.error(err);
+                    alert('Lỗi kết nối hoặc server: ' + err.message);
+                });
         });
     </script>
 

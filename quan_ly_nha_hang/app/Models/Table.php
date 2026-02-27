@@ -17,11 +17,16 @@ class Table extends Model
     public function latestBooking()
     {
         return $this->hasOne(Book::class, 'table_id', 'id')
-            ->where('status', 'Đã xác nhận')
-            ->whereRaw("CONCAT(date, ' ', time) > ?", [now()->toDateTimeString()])
+            ->whereIn('status', ['Đã xác nhận', 'Chờ khách']) // Lấy cả hai trạng thái còn hiệu lực
+            ->whereRaw("CONCAT(date, ' ', time) >= ?", [now()->subMinutes(15)->toDateTimeString()]) // Chưa quá hạn 15p
             ->orderBy('date', 'asc')
             ->orderBy('time', 'asc')
+            ->latest('id') // Ưu tiên booking mới nhất nếu có trùng thời gian
             ->limit(1);
+    }
+    public function orders()
+    {
+        return $this->hasMany(Order::class, 'table_id', 'id');
     }
 
     public function currentOrder()

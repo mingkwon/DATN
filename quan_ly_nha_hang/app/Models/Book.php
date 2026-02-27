@@ -55,4 +55,9 @@ class Book extends Model
         return $this->status;
     }
 
+    public function table()
+    {
+        return $this->belongsTo(Table::class, 'table_id', 'id');
+    }
+
 }

@@ -99,10 +99,8 @@
                     href="{{ url('menu') }}">Thực đơn</a>
                 <a class="text-[#637588] dark:text-white text-sm font-medium hover:text-primary transition-colors"
                     href="#">Đặt bàn</a>
-                <a class="text-[#637588] dark:text-[#9db8a6] text-sm font-medium hover:text-primary transition-colors"
-                    href="#">Ưu đãi</a>
-                <a class="text-[#637588] dark:text-[#9db8a6] text-sm font-medium hover:text-primary transition-colors"
-                    href="#">Giới thiệu</a>
+                <a class="text-[#637588] dark:text-[#9db8a6] text-sm font-medium leading-normal hover:text-primary transition-colors"
+                    href="{{ url('intro') }}">Giới thiệu</a>
             </nav>
         </div>
         <div class="flex flex-1 justify-end gap-6 items-center">
@@ -134,12 +132,12 @@
             <div>
                 @if(session()->has('message'))
                     <div id="session-alert" class="fixed left-1/2 top-4 -translate-x-1/2 z-[1000]
-                                 flex items-center gap-3 px-6 py-3 rounded-xl
-                                 bg-[#0f172a] border border-primary/30
-                                 text-slate-100 text-sm font-medium
-                                 shadow-2xl animate-fade-in-up">
+                                                flex items-center gap-3 px-6 py-3 rounded-xl
+                                                bg-[#D8ECDA] border border-primary/30
+                                                text-[#275626] text-sm font-medium
+                                                shadow-2xl animate-fade-in-up">
 
-                        <span class="material-symbols-outlined text-xl text-primary flex-shrink-0">
+                        <span class="material-symbols-outlined text-xl text-[#275626] flex-shrink-0">
                             check_circle
                         </span>
 
@@ -148,9 +146,10 @@
                         </span>
 
                         <button type="button" aria-label="Đóng" onclick="closeSessionAlert()" class="ml-2 flex items-center justify-center
-                                           w-7 h-7 rounded-full
-                                           bg-white/10 hover:bg-white/20
-                                           text-slate-200 transition-all duration-200">
+                                                w-7 h-7 rounded-full
+                                                text-[#275626]
+                                                bg-[#9FB8A0]/20 hover:bg-[#9FB8A0]/40
+                                                transition-all duration-200">
                             <span class="material-symbols-outlined text-lg">close</span>
                         </button>
                     </div>

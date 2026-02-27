@@ -119,23 +119,18 @@
                             class="material-symbols-outlined text-gray-400 group-hover:text-white">table_restaurant</span>
                         <p class="text-gray-300 group-hover:text-white text-sm font-medium">Bàn phục vụ</p>
                     </a>
+                    <a class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 transition-colors group"
+                        href="{{ url('bookings') }}">
+                        <span class="material-symbols-outlined text-gray-400 group-hover:text-white">receipt_long</span>
+                        <p class="text-gray-300 group-hover:text-white text-sm font-medium">Danh sách đặt bàn</p>
+                    </a>
                     <a class="flex items-center gap-3 px-4 py-3 rounded-xl bg-primary/10 border border-primary/20"
                         href="#">
                         <span class="material-symbols-outlined text-primary fill-1">restaurant</span>
                         <p class="text-primary text-sm font-bold">Quản lý thực đơn</p>
                     </a>
                     <a class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 transition-colors group"
-                        href="{{ url('bookings') }}">
-                        <span class="material-symbols-outlined text-gray-400 group-hover:text-white">receipt_long</span>
-                        <p class="text-gray-300 group-hover:text-white text-sm font-medium">Danh sách đặt bàn</p>
-                    </a>
-                    <a class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 transition-colors group"
-                        href="#">
-                        <span class="material-symbols-outlined text-gray-400 group-hover:text-white">inventory_2</span>
-                        <p class="text-gray-300 group-hover:text-white text-sm font-medium">Kho hàng</p>
-                    </a>
-                    <a class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 transition-colors group"
-                        href="#">
+                        href="{{ url('setting') }}">
                         <span class="material-symbols-outlined text-gray-400 group-hover:text-white">settings</span>
                         <p class="text-gray-300 group-hover:text-white text-sm font-medium">Cài đặt</p>
                     </a>

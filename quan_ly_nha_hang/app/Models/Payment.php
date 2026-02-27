@@ -11,7 +11,7 @@ class Payment extends Model
     protected $fillable = [
         'order_id',
         'so_tien',
-        'phuong_thuc',              // 'tien_mat', 'the', 'chuyen_khoan', 'momo', 'vnpay', 'chia_hoa_don'...
+        'phuong_thuc',              // 'tien_mat', 'chuyen_khoan'
         'trang_thai_thanh_toan',    // 'cho_xu_ly', 'thanh_cong', 'that_bai', 'hoan_tien'
         'ma_giao_dich',
         'thoi_gian_thanh_toan',

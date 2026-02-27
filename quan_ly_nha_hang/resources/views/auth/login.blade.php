@@ -94,7 +94,7 @@
 
         <div class="relative z-10 flex items-center gap-2 text-gray-400 text-sm">
             <span class="material-symbols-outlined text-base">location_on</span>
-            <span>Ho Chi Minh City, Vietnam</span>
+            <span>Hà Nội, Việt Nam</span>
         </div>
     </div>
 

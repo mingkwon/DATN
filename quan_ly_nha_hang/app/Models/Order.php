@@ -26,4 +26,14 @@ class Order extends Model
     {
         return $this->hasMany(OrderItems::class, 'order_id');
     }
+
+    public function ban_an()
+    {
+        return $this->belongsTo(Table::class, 'table_id', 'id');
+    }
+
+    public function booking()
+{
+    return $this->belongsTo(Book::class, 'book_id');
+}
 }

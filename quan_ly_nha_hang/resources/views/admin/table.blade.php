@@ -2,6 +2,7 @@
 <html class="dark" lang="vi">
 
 <head>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <title>Bàn phục vụ - Chế độ xem lưới tối giản</title>
@@ -255,36 +256,51 @@
                 </div>
                 <div class="h-px bg-border-dark my-1"></div>
                 <div class="flex flex-col gap-1">
-                    <a class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 transition-colors group"
-                        href="{{ url('home') }}">
-                        <span class="material-symbols-outlined text-gray-400 group-hover:text-white">dashboard</span>
-                        <p class="text-gray-300 group-hover:text-white text-sm font-medium">Tổng quan</p>
+                    @if(Auth::user()->usertype === 'admin')
+                        <!-- Chỉ admin thấy Tổng quan -->
+                        <a class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 transition-colors group"
+                            href="{{ url('home') }}">
+                            <span class="material-symbols-outlined text-gray-400 group-hover:text-white">dashboard</span>
+                            <p class="text-gray-300 group-hover:text-white text-sm font-medium">Tổng quan</p>
+                        </a>
+                    @endif
+
+                    <!-- Luôn hiển thị cho cả admin và staff -->
+                    <!-- Active khi đang ở trang table_order hoặc tables -->
+                    <a class="flex items-center gap-3 px-4 py-3 rounded-xl {{ (request()->is('tables') || request()->is('table_order/*')) ? 'bg-primary/10 border border-primary/20' : 'hover:bg-white/5' }} transition-colors group"
+                        href="{{ url('tables') }}">
+                        <span
+                            class="material-symbols-outlined {{ (request()->is('tables') || request()->is('table_order/*')) ? 'text-primary fill-1' : 'text-gray-400 group-hover:text-white' }}">table_restaurant</span>
+                        <p
+                            class="{{ (request()->is('tables') || request()->is('table_order/*')) ? 'text-primary font-bold' : 'text-gray-300 group-hover:text-white' }} text-sm">
+                            Bàn phục vụ</p>
                     </a>
-                    <a class="flex items-center gap-3 px-4 py-3 rounded-xl bg-primary/10 border border-primary/20"
-                        href="#">
-                        <span class="material-symbols-outlined text-primary fill-1">table_restaurant</span>
-                        <p class="text-primary text-sm font-bold">Bàn phục vụ</p>
-                    </a>
-                    <a class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 transition-colors group"
-                        href="{{ url('add_food') }}">
-                        <span class="material-symbols-outlined text-gray-400 group-hover:text-white">restaurant</span>
-                        <p class="text-gray-300 group-hover:text-white text-sm font-medium">Quản lý thực đơn</p>
-                    </a>
-                    <a class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 transition-colors group"
+
+                    <!-- Danh sách đặt bàn -->
+                    <a class="flex items-center gap-3 px-4 py-3 rounded-xl {{ request()->is('bookings') ? 'bg-primary/10 border border-primary/20' : 'hover:bg-white/5' }} transition-colors group"
                         href="{{ url('bookings') }}">
-                        <span class="material-symbols-outlined text-gray-400 group-hover:text-white">receipt_long</span>
-                        <p class="text-gray-300 group-hover:text-white text-sm font-medium">Danh sách đặt bàn</p>
+                        <span
+                            class="material-symbols-outlined {{ request()->is('bookings') ? 'text-primary fill-1' : 'text-gray-400 group-hover:text-white' }}">receipt_long</span>
+                        <p
+                            class="{{ request()->is('bookings') ? 'text-primary font-bold' : 'text-gray-300 group-hover:text-white' }} text-sm">
+                            Danh sách đặt bàn</p>
                     </a>
-                    <a class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 transition-colors group"
-                        href="#">
-                        <span class="material-symbols-outlined text-gray-400 group-hover:text-white">inventory_2</span>
-                        <p class="text-gray-300 group-hover:text-white text-sm font-medium">Kho hàng</p>
-                    </a>
-                    <a class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 transition-colors group"
-                        href="#">
-                        <span class="material-symbols-outlined text-gray-400 group-hover:text-white">settings</span>
-                        <p class="text-gray-300 group-hover:text-white text-sm font-medium">Cài đặt</p>
-                    </a>
+
+                    @if(Auth::user()->usertype === 'admin')
+                        <!-- Chỉ admin thấy Quản lý thực đơn -->
+                        <a class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 transition-colors group"
+                            href="{{ url('add_food') }}">
+                            <span class="material-symbols-outlined text-gray-400 group-hover:text-white">restaurant</span>
+                            <p class="text-gray-300 group-hover:text-white text-sm font-medium">Quản lý thực đơn</p>
+                        </a>
+
+                        <!-- Chỉ admin thấy Cài đặt -->
+                        <a class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 transition-colors group"
+                            href="{{ url('setting') }}">
+                            <span class="material-symbols-outlined text-gray-400 group-hover:text-white">settings</span>
+                            <p class="text-gray-300 group-hover:text-white text-sm font-medium">Cài đặt</p>
+                        </a>
+                    @endif
                 </div>
             </div>
             <div class="p-4">
@@ -313,6 +329,32 @@
                             <p class="text-gray-400 text-sm font-normal mt-1">Quản lý trạng thái bàn ăn trực tiếp</p>
                         </div>
                     </div>
+
+                    @if(session()->has('message'))
+                        <div id="session-alert" class="fixed left-1/2 top-4 -translate-x-1/2 z-[1000]
+                                                                                    flex items-center gap-3 px-6 py-3 rounded-xl
+                                                                                    bg-[#D8ECDA] border border-primary/30
+                                                                                    text-[#275626] text-sm font-medium
+                                                                                    shadow-2xl animate-fade-in-up">
+
+                            <span class="material-symbols-outlined text-xl text-[#275626] flex-shrink-0">
+                                check_circle
+                            </span>
+
+                            <span class="leading-tight">
+                                {{ session('message') }}
+                            </span>
+
+                            <button type="button" aria-label="Đóng" onclick="closeSessionAlert()"
+                                class="ml-2 flex items-center justify-center
+                                                                                                           w-7 h-7 rounded-full
+                                                                                                           text-[#275626]
+                                                                                                           bg-[#9FB8A0]/20 hover:bg-[#9FB8A0]/40
+                                                                                                           transition-all duration-200">
+                                <span class="material-symbols-outlined text-lg">close</span>
+                            </button>
+                        </div>
+                    @endif
 
                     <!-- Phần bên phải: tất cả nằm sát nhau -->
                     <div class="flex items-center gap-4 md:gap-6">
@@ -346,13 +388,15 @@
                             </button>
                         </div>
 
-                        <!-- Nút Thêm bàn mới -->
-                        <button onclick="openAddModal()"
-                            class="flex items-center gap-2 bg-primary hover:bg-primary-dark active:scale-95 transition-all text-background-dark px-5 py-3 rounded-xl font-bold text-sm shadow-[0_0_20px_rgba(25,230,94,0.3)] cursor-pointer no-underline"
-                            href="#">
-                            <span class="material-symbols-outlined text-xl">add_circle</span>
-                            <span>Thêm bàn mới</span>
-                        </button>
+                        <!-- Nút Thêm bàn mới chỉ dành cho admin -->
+                        @if(Auth::user()->usertype === 'admin')
+                            <button onclick="openAddModal()"
+                                class="flex items-center gap-2 bg-primary hover:bg-primary-dark active:scale-95 transition-all text-background-dark px-5 py-3 rounded-xl font-bold text-sm shadow-[0_0_20px_rgba(25,230,94,0.3)] cursor-pointer no-underline"
+                                href="#">
+                                <span class="material-symbols-outlined text-xl">add_circle</span>
+                                <span>Thêm bàn mới</span>
+                            </button>
+                        @endif
                     </div>
                 </div>
                 <div id="table-tabs" class="flex items-center gap-2 overflow-x-auto no-scrollbar pb-2">
@@ -382,17 +426,22 @@
                 <div id="table-grid"
                     class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-6">
                     @foreach($tables as $table)
-                        <div class="group relative bg-surface-dark border border-border-dark rounded-2xl p-5 flex flex-col items-center justify-center gap-4 cursor-pointer transition-all hover:shadow-lg hover:shadow-primary/10 hover:-translate-y-1 table-item"
-                            data-type="{{ $table->vi_tri }}" data-time-booked="{{ $table->latestBooking?->time ?? '' }}">
+                        @php
+                            $activeBooking = $tableExtras[$table->id] ?? null;
+                        @endphp
 
-                            <!-- 1. Chấm xanh góc trên phải cho bàn Trống -->
+                        <div class="group relative bg-surface-dark border border-border-dark rounded-2xl p-6 flex flex-col items-center justify-center gap-6 cursor-pointer transition-all hover:shadow-lg hover:shadow-primary/10 hover:-translate-y-1 table-item min-h-[220px]"
+                            data-type="{{ $table->vi_tri }}" data-table-id="{{ $table->id }}"
+                            data-booking-id="{{ $activeBooking?->id ?? '' }}">
+
+                            <!-- Chấm xanh góc trên phải cho bàn Trống -->
                             @if($table->trang_thai == 'Trống')
                                 <div
                                     class="absolute top-3 right-3 size-3 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.5)]">
                                 </div>
                             @endif
 
-                            <!-- Thời gian góc trên phải (chỉ hiện cho bàn Đang dùng) -->
+                            <!-- Thời gian góc trên phải (cho Đang dùng) -->
                             @if($table->trang_thai == 'Đang dùng' && $table->currentOrder)
                                 <div class="absolute top-3 right-3 flex items-center gap-1 text-xs font-bold px-2 py-1 rounded bg-yellow-500/20 text-yellow-400 shadow-md usage-time"
                                     data-opened-at="{{ $table->currentOrder->created_at->toISOString() }}">
@@ -401,19 +450,29 @@
                                 </div>
                             @endif
 
-                            <!-- 2. Thời gian góc trên phải (cho Đã đặt) -->
-                            <div
-                                class="absolute top-3 right-3 flex items-center gap-1 text-[10px] font-bold px-2 py-1 rounded bg-opacity-20
-                                                {{ $table->trang_thai == 'Đã đặt' ? 'bg-blue-500/20 text-blue-500' : '' }}">
-                                <!-- JS sẽ fill nội dung thời gian dựa trên data attribute -->
-                            </div>
+                            <!-- Thời gian góc trên phải (cho Đã đặt) -->
+                            @if($table->trang_thai == 'Đã đặt' && $activeBooking?->time)
+                                <div
+                                    class="absolute top-3 right-3 flex items-center gap-1 text-[10px] font-bold px-2 py-1 rounded bg-blue-500/20 text-blue-500 shadow-md">
+                                    <span class="material-symbols-outlined text-[12px]">alarm</span>
+                                    <span>{{ $activeBooking->time }}</span>
+                                </div>
+                            @endif
 
-                            <!-- 3. Icon và nền theo trạng thái -->
-                            <div
-                                class="size-20 rounded-full flex items-center justify-center transition-transform group-hover:scale-110 duration-300
-                                                                        {{ $table->trang_thai == 'Trống' ? 'bg-primary/10 text-primary' : '' }}
-                                                                        {{ $table->trang_thai == 'Đang dùng' ? 'bg-yellow-500/10 text-yellow-500' : '' }}
-                                                                        {{ $table->trang_thai == 'Đã đặt' ? 'bg-blue-500/10 text-blue-500' : '' }}">
+                            <!-- Tên khách hàng góc trên bên trái (chỉ cho bàn Đã đặt) -->
+                            @if($table->trang_thai == 'Đã đặt' && $activeBooking?->name)
+                                <div
+                                    class="absolute top-3 left-3 flex items-center gap-1 text-[10px] font-bold px-2 py-1 rounded bg-blue-500/20 text-blue-500 shadow-md max-w-[120px] truncate">
+                                    <span class="material-symbols-outlined text-[12px]">person</span>
+                                    <span class="truncate">{{ $activeBooking->name }}</span>
+                                </div>
+                            @endif
+
+                            <!-- Icon và nền theo trạng thái -->
+                            <div class="size-24 rounded-full flex items-center justify-center transition-transform group-hover:scale-110 duration-300 mt-8
+                                        {{ $table->trang_thai == 'Trống' ? 'bg-primary/10 text-primary' : '' }}
+                                        {{ $table->trang_thai == 'Đang dùng' ? 'bg-yellow-500/10 text-yellow-500' : '' }}
+                                        {{ $table->trang_thai == 'Đã đặt' ? 'bg-blue-500/10 text-blue-500' : '' }}">
                                 <span class="material-symbols-outlined text-4xl">
                                     {{ $table->trang_thai == 'Trống' ? 'table_restaurant' : '' }}
                                     {{ $table->trang_thai == 'Đang dùng' ? 'restaurant' : '' }}
@@ -423,11 +482,10 @@
 
                             <div class="text-center">
                                 <h3 class="text-white text-xl font-bold">Bàn {{ $table->ten_ban }}</h3>
-                                <p
-                                    class="text-sm font-bold uppercase tracking-wide mt-1
-                                                                            {{ $table->trang_thai == 'Trống' ? 'text-primary' : '' }}
-                                                                            {{ $table->trang_thai == 'Đang dùng' ? 'text-yellow-500' : '' }}
-                                                                            {{ $table->trang_thai == 'Đã đặt' ? 'text-blue-500' : '' }}">
+                                <p class="text-sm font-bold uppercase tracking-wide mt-1
+                                            {{ $table->trang_thai == 'Trống' ? 'text-primary' : '' }}
+                                            {{ $table->trang_thai == 'Đang dùng' ? 'text-yellow-500' : '' }}
+                                            {{ $table->trang_thai == 'Đã đặt' ? 'text-blue-500' : '' }}">
                                     {{ $table->trang_thai }}
                                 </p>
                             </div>
@@ -464,6 +522,17 @@
                     e.preventDefault();
                 }
             });
+
+        function closeSessionAlert() {
+            const alert = document.getElementById('session-alert');
+            if (!alert) return;
+
+            alert.classList.add('opacity-0', 'scale-95');
+            setTimeout(() => alert.remove(), 200);
+        }
+        setTimeout(() => {
+            closeSessionAlert();
+        }, 3000);
 
         // Filter bàn theo tab
         const ACTIVE_CLASSES = [
@@ -540,40 +609,61 @@
             item.addEventListener('click', (e) => {
                 const status = item.querySelector('p.text-sm.font-bold.uppercase').textContent.trim();
                 if (status === 'Đã đặt') {
-                    e.preventDefault(); // Ngăn chuyển trang order ngay
+                    e.preventDefault();
+
+                    const orderLink = item.querySelector('a.absolute.inset-0');
+                    const tableId = orderLink ? orderLink.getAttribute('href').split('/').pop() : null;
+
+                    if (!tableId) {
+                        alert('Không tìm thấy ID bàn!');
+                        return;
+                    }
+
+                    const bookingId = item.dataset.bookingId;
+
+                    if (!bookingId) {
+                        alert('Không tìm thấy đặt bàn liên kết!');
+                        return;
+                    }
+
                     document.getElementById('booked-table-modal').classList.remove('hidden');
                     document.getElementById('booked-table-modal').classList.add('flex');
 
-                    // Lưu ID bàn để xử lý sau (nếu cần)
-                    const tableId = item.querySelector('a.absolute.inset-0')?.getAttribute('href').split('/').pop() || '';
-
-                    // Nút Mở bàn ngay
+                    // Nút Mở bàn ngay → chuyển đến table_order
                     document.getElementById('open-table-btn').onclick = () => {
-                        // Chuyển đến trang order bàn
-                        window.location.href = item.querySelector('a.absolute.inset-0')?.href || '#';
+                        window.location.href = `/table_order/${tableId}`;
                     };
 
-                    // Nút Hủy bàn đặt
+                    // Nút Hủy bàn đặt → hủy booking
                     document.getElementById('cancel-booking-btn').onclick = () => {
                         if (confirm('Bạn chắc chắn muốn hủy đặt bàn này?')) {
-                            // Gửi request hủy (thay bằng route thật của bạn)
-                            fetch(`/cancel_booking/${tableId}`, {
+                            fetch(`/reject_book/${bookingId}`, {
                                 method: 'POST',
                                 headers: {
-                                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),  // ← Sửa thành lấy từ meta tag
                                     'Content-Type': 'application/json',
+                                    'Accept': 'application/json'
                                 },
+                                body: JSON.stringify({})  // ← Thêm body rỗng nếu cần (Laravel POST thường yêu cầu)
                             })
-                                .then(response => response.json())
+                                .then(response => {
+                                    if (!response.ok) {
+                                        throw new Error('Lỗi server: ' + response.status);
+                                    }
+                                    return response.json();
+                                })
                                 .then(data => {
                                     if (data.success) {
                                         alert('Đã hủy đặt bàn thành công!');
-                                        location.reload(); // Reload để cập nhật trạng thái bàn
+                                        location.reload(); // Reload để cập nhật UI (bàn về Trống)
                                     } else {
-                                        alert('Lỗi: ' + data.message);
+                                        alert('Lỗi: ' + (data.message || 'Không thể hủy'));
                                     }
                                 })
-                                .catch(err => alert('Lỗi kết nối: ' + err));
+                                .catch(err => {
+                                    console.error(err);
+                                    alert('Lỗi kết nối hoặc server: ' + err.message);
+                                });
                         }
                     };
                 }
@@ -607,6 +697,46 @@
 
             updateTime();
             setInterval(updateTime, 1000); // Cập nhật mỗi phút (vì chỉ cần phút, không cần giây)
+        });
+
+        // Tự hủy booking sau 15 phút nếu chưa mở bàn
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.table-item[data-time-booked]').forEach(item => {
+                const timeBooked = item.dataset.timeBooked;
+                if (!timeBooked) return;
+
+                const bookingTime = new Date(`${new Date().toDateString()} ${timeBooked}`);
+                const expireTime = new Date(bookingTime);
+                expireTime.setMinutes(expireTime.getMinutes() + 15);
+
+                function checkExpire() {
+                    const now = new Date();
+                    if (now > expireTime) {
+                        const bookingId = item.dataset.bookingId;
+                        if (bookingId) {
+                            fetch(`/bookings/${bookingId}/cancel`, {
+                                method: 'POST',
+                                headers: {
+                                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                    'Content-Type': 'application/json'
+                                }
+                            })
+                                .then(response => response.json())
+                                .then(data => {
+                                    if (data.success) {
+                                        item.querySelector('p.text-sm.font-bold.uppercase').textContent = 'Trống';
+                                        item.classList.remove('bg-blue-500/10', 'text-blue-500');
+                                        item.classList.add('bg-emerald-500/10', 'text-primary');
+                                        item.querySelector('.absolute.top-3.right-3').innerHTML = '<span class="size-3 rounded-full bg-emerald-500 animate-pulse"></span>';
+                                    }
+                                });
+                        }
+                    }
+                }
+
+                checkExpire();
+                setInterval(checkExpire, 1000);
+            });
         });
     </script>
 
