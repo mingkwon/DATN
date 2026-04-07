@@ -100,7 +100,7 @@
                         <span class="material-symbols-outlined text-gray-400 group-hover:text-white">receipt_long</span>
                         <p class="text-gray-300 group-hover:text-white text-sm font-medium">Danh sách đặt bàn</p>
                     </a>
-                      <a class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 transition-colors group"
+                    <a class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 transition-colors group"
                         href="{{ url('add_food') }}">
                         <span class="material-symbols-outlined text-gray-400 group-hover:text-white">restaurant</span>
                         <p class="text-gray-300 group-hover:text-white text-sm font-medium">Quản lý thực đơn</p>
@@ -590,8 +590,7 @@
                         <div class="flex flex-col gap-6">
                             <div id="category-pie-container"
                                 class="flex-1 flex flex-col rounded-xl bg-white dark:bg-card-dark border border-slate-200 dark:border-[#29382e] p-5 shadow-sm">
-                                <h3 class="text-slate-900 dark:text-white font-bold text-base mb-4">
-                                    Doanh thu theo danh
+                                <h3 class="text-slate-900 dark:text-white font-bold text-base mb-4">Doanh thu theo danh
                                     mục</h3>
                                 <div class="flex items-center gap-6">
                                     <div class="relative size-32 shrink-0">
@@ -602,22 +601,18 @@
 
                                             @php
                                                 $cumulative = 0;
+                                                // Mảng màu cố định - key PHẢI khớp chính xác với controller
                                                 $colors = [
-                                                    'Món chính' => '#19e65e',
-                                                    'Đồ uống' => '#3b82f6',
-                                                    'Khai vị' => '#8b5cf6',
-                                                    'Tráng miệng' => '#f97316'
+                                                    'Món chính' => '#19e65e',   // xanh lá
+                                                    'Đồ uống' => '#3b82f6',   // xanh dương
+                                                    'Khai vị' => '#8b5cf6',   // tím
+                                                    'Tráng miệng' => '#f97316',   // cam
                                                 ];
-                                                // Lấy key trực tiếp từ mảng để tránh sai dấu/khoảng trắng
-                                                $fixedCategories = array_keys($categoryPercent ?? [
-                                                    'Món chính' => 0,
-                                                    'Đồ uống' => 0,
-                                                    'Khai vị' => 0,
-                                                    'Tráng miệng' => 0
-                                                ]);
+                                                // Thứ tự cố định (phải giống mảng trên)
+                                                $categories = ['Món chính', 'Đồ uống', 'Khai vị', 'Tráng miệng'];
                                             @endphp
 
-                                            @foreach($fixedCategories as $category)
+                                            @foreach($categories as $category)
                                                 @php $percent = $categoryPercent[$category] ?? 0; @endphp
                                                 @if($percent > 0)
                                                     <path style="stroke: {{ $colors[$category] ?? '#6b7280' }}"
@@ -634,7 +629,7 @@
                                     </div>
 
                                     <div class="flex flex-col gap-3 flex-1 text-sm">
-                                        @foreach($fixedCategories as $category)
+                                        @foreach($categories as $category)
                                             @php $percent = $categoryPercent[$category] ?? 0; @endphp
                                             <div class="flex justify-between items-center">
                                                 <div class="flex items-center gap-2">
@@ -835,50 +830,83 @@
         // Render danh mục tròn bằng ID
         function renderCategoryPie(categoryPercent) {
             const container = document.getElementById('category-pie-container');
-            if (!container) {
-                console.error('Không tìm thấy #category-pie-container');
-                return;
-            }
+            if (!container) return console.error('Không tìm thấy container');
 
             const svg = container.querySelector('svg');
-            if (!svg) {
-                console.error('Không tìm thấy SVG trong danh mục');
-                return;
-            }
+            if (!svg) return console.error('Không tìm thấy SVG');
 
-            // Lấy tất cả path có stroke-dasharray (các phần slice)
-            const paths = svg.querySelectorAll('path[stroke-dasharray]');
-            // Lấy legend items (các div justify-between trong flex-col gap-3)
-            const legendItems = container.querySelectorAll('.flex.justify-between');
+            const paths = Array.from(svg.querySelectorAll('path[stroke-dasharray]'));
+            const legendItems = Array.from(container.querySelectorAll('.flex.justify-between'));
 
+            // Định nghĩa thứ tự và màu cố định
+            const categoryOrder = ['Món chính', 'Đồ uống', 'Khai vị', 'Tráng miệng'];
+            const colors = {
+                'Món chính': '#19e65e',
+                'Đồ uống': '#3b82f6',
+                'Khai vị': '#8b5cf6',
+                'Tráng miệng': '#f97316'
+            };
+
+            // BƯỚC 1: RESET TOÀN BỘ PATH VÀ LEGEND VỀ 0% TRƯỚC KHI RENDER MỚI
+            paths.forEach(path => {
+                path.setAttribute('stroke-dasharray', '0, 100');
+                path.setAttribute('stroke-dashoffset', '0');
+                path.style.stroke = '#6b7280'; // xám mặc định
+                path.style.display = 'none';   // ẩn hết trước
+            });
+
+            legendItems.forEach(legend => {
+                const percentSpan = legend.querySelector('span.font-bold');
+                if (percentSpan) percentSpan.textContent = '0%';
+                const dot = legend.querySelector('span.size-2.rounded-full');
+                if (dot) dot.style.backgroundColor = '#6b7280';
+            });
+
+            // BƯỚC 2: RENDER DỮ LIỆU MỚI
             let cumulative = 0;
-            const fixedCategories = ['Món chính', 'Đồ uống', 'Khai vị', 'Tráng miệng'];
-            const colors = ['#19e65e', '#3b82f6', '#8b5cf6', '#f97316'];
+            let usedIndex = 0;
 
-            fixedCategories.forEach((cat, index) => {
+            categoryOrder.forEach(cat => {
                 const percent = categoryPercent[cat] || 0;
+                console.log(`Xử lý ${cat}: ${percent}%`);
 
-                // Cập nhật path
-                const path = paths[index];
-                if (path) {
-                    path.setAttribute('stroke-dasharray', `${percent}, 100`);
-                    path.setAttribute('stroke-dashoffset', `-${cumulative}`);
-                    path.style.stroke = colors[index];
-                    path.style.display = percent > 0 ? '' : 'none';
-                    cumulative += percent;
+                if (percent > 0) {
+                    const path = paths[usedIndex];
+                    if (path) {
+                        path.setAttribute('stroke-dasharray', `${percent}, 100`);
+                        path.setAttribute('stroke-dashoffset', `-${cumulative}`);
+                        path.style.stroke = colors[cat] || '#6b7280';
+                        path.style.display = '';
+                        console.log(` → Path ${usedIndex} cập nhật: offset -${cumulative}, màu ${colors[cat]}`);
+                        cumulative += percent;
+                    }
+                    usedIndex++;
                 }
 
-                // Cập nhật % trong legend
-                const legend = legendItems[index];
+                // Cập nhật legend (luôn cập nhật dù % = 0)
+                const legendIndex = categoryOrder.indexOf(cat);
+                const legend = legendItems[legendIndex];
                 if (legend) {
                     const percentSpan = legend.querySelector('span.font-bold');
-                    if (percentSpan) {
-                        percentSpan.textContent = `${percent}%`;
-                    }
+                    if (percentSpan) percentSpan.textContent = `${percent}%`;
+
+                    const dot = legend.querySelector('span.size-2.rounded-full');
+                    if (dot) dot.style.backgroundColor = colors[cat] || '#6b7280';
                 }
             });
 
-            console.log('Render danh mục thành công:', categoryPercent);
+            // Nếu tổng % < 100 (do làm tròn), bù vào slice cuối (nếu có)
+            if (cumulative < 100 && usedIndex > 0) {
+                const lastPath = paths[usedIndex - 1];
+                if (lastPath) {
+                    const lastPercent = parseFloat(lastPath.getAttribute('stroke-dasharray').split(',')[0]) || 0;
+                    const newPercent = lastPercent + (100 - cumulative);
+                    lastPath.setAttribute('stroke-dasharray', `${newPercent}, 100`);
+                    console.log(`Bù % cho slice cuối: +${100 - cumulative}%`);
+                }
+            }
+
+            console.log('Render danh mục hoàn tất (cumulative: ' + cumulative + '%)');
         }
 
         // Render khu vực tròn bằng ID

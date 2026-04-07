@@ -68,6 +68,7 @@ Route::middleware(['auth', 'protect.admin', 'restrict.staff'])->group(function (
 
     // Quản lý bàn & đặt bàn admin
     Route::post('/add_table', [AdminController::class, 'add_table']);
+    Route::get('/delete_table/{id}', [AdminController::class, 'deleteTable'])->name('delete.table');
 
     // Các route khác dành cho admin
     Route::get('/setting', [AdminController::class, 'setting']);

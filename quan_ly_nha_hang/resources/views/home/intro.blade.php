@@ -91,16 +91,25 @@
             </nav>
         </div>
         <div class="flex flex-1 justify-end gap-6 items-center">
-            <div class="flex gap-3">
-                <button
-                    class="flex items-center justify-center overflow-hidden rounded-xl h-10 w-10 bg-[#f0f2f4] dark:bg-[#29382e] hover:bg-primary/20 hover:text-primary transition-colors text-[#111813] dark:text-white">
-                    <span class="material-symbols-outlined">shopping_bag</span>
-                </button>
-                <button
-                    class="flex items-center justify-center overflow-hidden rounded-xl h-10 w-10 bg-[#f0f2f4] dark:bg-[#29382e] hover:bg-primary/20 hover:text-primary transition-colors text-[#111813] dark:text-white">
-                    <span class="material-symbols-outlined">account_circle</span>
-                </button>
-            </div>
+            <!-- Phần đăng nhập/đăng ký/đăng xuất -->
+            @guest
+                <!-- Chưa đăng nhập: hiển thị Truy cập quản lý -->
+                <a href="{{ route('login') }}"
+                    class="flex items-center justify-center rounded-xl h-10 px-6 bg-primary text-[#112116] text-sm font-bold hover:bg-[#15c550] transition-all shadow-sm hover:shadow-md hover:scale-105">
+                    <span class="material-symbols-outlined mr-2">admin_panel_settings</span>
+                    Truy cập quản lý
+                </a>
+            @else
+                <!-- Đã đăng nhập: hiển thị Đăng xuất (fit kích thước) -->
+                <form method="POST" action="{{ route('logout') }}" class="inline">
+                    @csrf
+                    <button type="submit"
+                        class="flex items-center justify-center rounded-xl h-10 px-6 bg-surface-600/10 border border-white-500/30 text-white-400 hover:border-red-500/50 hover:bg-red-600/20 hover:text-red-300 hover:scale-105 transition-all text-sm font-bold shadow-sm hover:shadow-md">
+                        <span class="material-symbols-outlined mr-2 text-base">logout</span>
+                        Đăng xuất
+                    </button>
+                </form>
+            @endguest
         </div>
     </header>
     <main class="flex-grow flex flex-col items-center w-full max-w-[1400px] mx-auto">

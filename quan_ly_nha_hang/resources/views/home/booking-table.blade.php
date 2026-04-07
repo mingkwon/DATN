@@ -104,16 +104,25 @@
             </nav>
         </div>
         <div class="flex flex-1 justify-end gap-6 items-center">
-            <div class="flex gap-3">
-                <button
-                    class="flex items-center justify-center rounded-xl h-10 w-10 bg-[#f0f2f4] dark:bg-[#29382e] hover:bg-primary/20 hover:text-primary transition-colors text-[#111813] dark:text-white">
-                    <span class="material-symbols-outlined">shopping_bag</span>
-                </button>
-                <button
-                    class="flex items-center justify-center rounded-xl h-10 w-10 bg-[#f0f2f4] dark:bg-[#29382e] hover:bg-primary/20 hover:text-primary transition-colors text-[#111813] dark:text-white">
-                    <span class="material-symbols-outlined">account_circle</span>
-                </button>
-            </div>
+            <!-- Phần đăng nhập/đăng ký/đăng xuất -->
+            @guest
+                <!-- Chưa đăng nhập: hiển thị Truy cập quản lý -->
+                <a href="{{ route('login') }}"
+                    class="flex items-center justify-center rounded-xl h-10 px-6 bg-primary text-[#112116] text-sm font-bold hover:bg-[#15c550] transition-all shadow-sm hover:shadow-md hover:scale-105">
+                    <span class="material-symbols-outlined mr-2">admin_panel_settings</span>
+                    Truy cập quản lý
+                </a>
+            @else
+                <!-- Đã đăng nhập: hiển thị Đăng xuất (fit kích thước) -->
+                <form method="POST" action="{{ route('logout') }}" class="inline">
+                    @csrf
+                    <button type="submit"
+                        class="flex items-center justify-center rounded-xl h-10 px-6 bg-surface-600/10 border border-white-500/30 text-white-400 hover:border-red-500/50 hover:bg-red-600/20 hover:text-red-300 hover:scale-105 transition-all text-sm font-bold shadow-sm hover:shadow-md">
+                        <span class="material-symbols-outlined mr-2 text-base">logout</span>
+                        Đăng xuất
+                    </button>
+                </form>
+            @endguest
         </div>
     </header>
 
@@ -132,10 +141,10 @@
             <div>
                 @if(session()->has('message'))
                     <div id="session-alert" class="fixed left-1/2 top-4 -translate-x-1/2 z-[1000]
-                                                flex items-center gap-3 px-6 py-3 rounded-xl
-                                                bg-[#D8ECDA] border border-primary/30
-                                                text-[#275626] text-sm font-medium
-                                                shadow-2xl animate-fade-in-up">
+                                                    flex items-center gap-3 px-6 py-3 rounded-xl
+                                                    bg-[#D8ECDA] border border-primary/30
+                                                    text-[#275626] text-sm font-medium
+                                                    shadow-2xl animate-fade-in-up">
 
                         <span class="material-symbols-outlined text-xl text-[#275626] flex-shrink-0">
                             check_circle
@@ -146,10 +155,10 @@
                         </span>
 
                         <button type="button" aria-label="Đóng" onclick="closeSessionAlert()" class="ml-2 flex items-center justify-center
-                                                w-7 h-7 rounded-full
-                                                text-[#275626]
-                                                bg-[#9FB8A0]/20 hover:bg-[#9FB8A0]/40
-                                                transition-all duration-200">
+                                                    w-7 h-7 rounded-full
+                                                    text-[#275626]
+                                                    bg-[#9FB8A0]/20 hover:bg-[#9FB8A0]/40
+                                                    transition-all duration-200">
                             <span class="material-symbols-outlined text-lg">close</span>
                         </button>
                     </div>

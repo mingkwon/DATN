@@ -61,16 +61,25 @@
                 </nav>
             </div>
             <div class="flex flex-1 justify-end gap-6 items-center">
-                <div class="flex gap-3">
-                    <button
-                        class="flex items-center justify-center overflow-hidden rounded-xl h-10 w-10 bg-[#f0f2f4] dark:bg-[#29382e] hover:bg-primary/20 hover:text-primary transition-colors text-[#111813] dark:text-white">
-                        <span class="material-symbols-outlined">shopping_bag</span>
-                    </button>
-                    <button
-                        class="flex items-center justify-center overflow-hidden rounded-xl h-10 w-10 bg-[#f0f2f4] dark:bg-[#29382e] hover:bg-primary/20 hover:text-primary transition-colors text-[#111813] dark:text-white">
-                        <span class="material-symbols-outlined">account_circle</span>
-                    </button>
-                </div>
+                <!-- Phần đăng nhập/đăng ký/đăng xuất -->
+                @guest
+                    <!-- Chưa đăng nhập: hiển thị Truy cập quản lý -->
+                    <a href="{{ route('login') }}"
+                        class="flex items-center justify-center rounded-xl h-10 px-6 bg-primary text-[#112116] text-sm font-bold hover:bg-[#15c550] transition-all shadow-sm hover:shadow-md hover:scale-105">
+                        <span class="material-symbols-outlined mr-2">admin_panel_settings</span>
+                        Truy cập quản lý
+                    </a>
+                @else
+                    <!-- Đã đăng nhập: hiển thị Đăng xuất (fit kích thước) -->
+                    <form method="POST" action="{{ route('logout') }}" class="inline">
+                        @csrf
+                        <button type="submit"
+                            class="flex items-center justify-center rounded-xl h-10 px-6 bg-surface-600/10 border border-white-500/30 text-white-400 hover:border-red-500/50 hover:bg-red-600/20 hover:text-red-300 hover:scale-105 transition-all text-sm font-bold shadow-sm hover:shadow-md">
+                            <span class="material-symbols-outlined mr-2 text-base">logout</span>
+                            Đăng xuất
+                        </button>
+                    </form>
+                @endguest
             </div>
         </header>
         <main class="flex-1 w-full max-w-[1600px] mx-auto p-4 lg:p-6 flex flex-col gap-8">
@@ -217,7 +226,7 @@
     </div>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            // Định dạng giá tiền với dấu chấm (1.250.000₫)
+            // Định dạng giá tiền với dấu chấm
             document.querySelectorAll('span').forEach(span => {
                 if (span.textContent.trim().endsWith('₫')) {
                     const text = span.textContent.trim();
@@ -228,9 +237,32 @@
                 }
             });
 
-            // Lọc danh mục
-            const categoryButtons = document.querySelectorAll('.category-btn');
+            // ==================== TÌM KIẾM REAL-TIME ====================
+            const searchInput = document.querySelector('input[placeholder="Tìm món ăn..."]');
             const foodCards = document.querySelectorAll('.grid > div[data-type]');
+
+            if (searchInput) {
+                searchInput.addEventListener('input', function () {
+                    const searchTerm = this.value.toLowerCase().trim();
+
+                    foodCards.forEach(card => {
+                        const titleElement = card.querySelector('h4');
+                        if (titleElement) {
+                            const title = titleElement.textContent.toLowerCase();
+
+                            // Nếu tiêu đề chứa từ khóa tìm kiếm thì hiển thị, ngược lại ẩn
+                            if (title.includes(searchTerm)) {
+                                card.style.display = 'block';
+                            } else {
+                                card.style.display = 'none';
+                            }
+                        }
+                    });
+                });
+            }
+
+            // ==================== LỌC DANH MỤC ====================
+            const categoryButtons = document.querySelectorAll('.category-btn');
 
             categoryButtons.forEach(btn => {
                 btn.addEventListener('click', function () {
@@ -244,11 +276,20 @@
                     this.classList.add('bg-primary', 'text-black');
                     this.classList.remove('bg-surface-dark', 'text-white', 'border', 'border-[#29382e]');
 
-                    // Lọc card
+                    // Lọc card theo danh mục
                     foodCards.forEach(card => {
                         const type = card.getAttribute('data-type') || '';
+
                         if (filter === 'all' || type === filter) {
-                            card.style.display = 'block';
+                            // Chỉ hiển thị card nếu khớp với tìm kiếm hiện tại
+                            const titleElement = card.querySelector('h4');
+                            const currentSearch = searchInput ? searchInput.value.toLowerCase().trim() : '';
+
+                            if (titleElement && (currentSearch === '' || titleElement.textContent.toLowerCase().includes(currentSearch))) {
+                                card.style.display = 'block';
+                            } else {
+                                card.style.display = 'none';
+                            }
                         } else {
                             card.style.display = 'none';
                         }

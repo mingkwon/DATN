@@ -159,7 +159,7 @@ class AdminController extends Controller
 
         return view('admin.booking', compact('data'));
     }
-    
+
 
     public function getBookingInfo($id)
     {
@@ -526,6 +526,24 @@ class AdminController extends Controller
         return redirect()->back();
     }
 
+    public function deleteTable($id)
+    {
+        $table = Table::findOrFail($id);
+
+        if ($table->trang_thai !== 'Trống') {
+            return redirect()->back()->with('error', 'Chỉ có thể xóa bàn đang Trống!');
+        }
+
+        // Optional: Kiểm tra nếu có orders/booking đang active
+        if ($table->orders()->where('trang_thai', 'open')->exists()) {
+            return redirect()->back()->with('error', 'Bàn còn đơn hàng đang mở, không thể xóa!');
+        }
+
+        $table->delete(); // ← Soft delete: set deleted_at = now()
+
+        return redirect()->back()->with('success', 'Đã ẩn/xóa bàn thành công!');
+    }
+
     public function table_order($id)
     {
         $table = Table::findOrFail($id);
@@ -773,8 +791,8 @@ class AdminController extends Controller
     {
         $users = User::select('id', 'name', 'email', 'usertype', 'created_at')
             ->orderByRaw("CASE WHEN email = 'admin@gmail.com' THEN 0 ELSE 1 END") // admin@gmail.com lên đầu
-            ->orderBy('created_at', 'desc') 
-            ->paginate(10); 
+            ->orderBy('created_at', 'desc')
+            ->paginate(10);
 
         $totalUsers = User::count();
         $adminCount = User::where('usertype', 'admin')->count();
@@ -827,3 +845,4 @@ class AdminController extends Controller
         return response()->json(['success' => true]);
     }
 }
+ 

@@ -214,6 +214,126 @@
             </div>
         </form>
     </div>
+    <!-- Modal quản lý xóa bàn (chỉ admin) -->
+    <div class="hidden fixed inset-0 z-[100] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 overflow-auto"
+        id="delete-tables-modal">
+        <div
+            class="w-full max-w-5xl bg-surface-dark border border-border-dark rounded-3xl shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200 relative">
+            <!-- Header -->
+            <div class="p-6 border-b border-border-dark flex items-center justify-between bg-white/5">
+                <div class="flex items-center gap-3">
+                    <div class="size-10 rounded-full bg-red-500/10 text-red-500 flex items-center justify-center">
+                        <span class="material-symbols-outlined">delete_sweep</span>
+                    </div>
+                    <div>
+                        <h2 class="text-xl font-bold text-white">Quản lý xóa bàn</h2>
+                        <p class="text-xs text-gray-400">Chỉ xóa được bàn đang Trống. Không thể khôi phục!</p>
+                    </div>
+                </div>
+                <button onclick="closeDeleteTablesModal()"
+                    class="size-10 rounded-xl bg-background-dark flex items-center justify-center text-gray-400 hover:text-white transition-colors">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </div>
+
+            <!-- Nội dung danh sách bàn -->
+            <div class="p-6 max-h-[65vh] overflow-y-auto">
+                <div class="space-y-10">
+                    @php
+                        $groupedTables = $tables->groupBy('vi_tri');
+                    @endphp
+
+                    @foreach(['Tiêu chuẩn', 'Gần cửa sổ', 'Riêng tư', 'Ngoài trời'] as $vi_tri)
+                        @if($groupedTables->has($vi_tri))
+                            <div>
+                                <h3
+                                    class="text-primary text-xs font-black uppercase tracking-widest mb-5 flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-sm">
+                                        {{ $vi_tri === 'Tiêu chuẩn' ? 'deck' : ($vi_tri === 'Gần cửa sổ' ? 'window' : ($vi_tri === 'Riêng tư' ? 'meeting_room' : 'yard')) }}
+                                    </span>
+                                    Khu {{ $vi_tri }}
+                                </h3>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                                    @foreach($groupedTables[$vi_tri] as $table)
+                                        <div
+                                            class="group relative flex items-center justify-between p-5 rounded-2xl bg-background-dark border border-border-dark hover:border-red-500/50 transition-all min-h-[100px]">
+                                            <div class="flex items-center gap-4">
+                                                <span
+                                                    class="material-symbols-outlined text-3xl
+                                                                                                {{ $table->trang_thai === 'Trống' ? 'text-primary' : ($table->trang_thai === 'Đang dùng' ? 'text-yellow-500' : 'text-blue-500') }}">
+                                                    {{ $table->trang_thai === 'Trống' ? 'table_restaurant' : ($table->trang_thai === 'Đang dùng' ? 'restaurant' : 'event_seat') }}
+                                                </span>
+                                                <div>
+                                                    <p class="text-white font-bold text-lg">Bàn {{ $table->ten_ban }}</p>
+                                                    <p class="text-gray-500 text-sm mt-1">{{ $table->trang_thai }}</p>
+                                                </div>
+                                            </div>
+
+                                            <!-- Nút xóa chỉ cho bàn Trống -->
+                                            @if($table->trang_thai === 'Trống')
+                                                <button onclick="confirmDeleteTable({{ $table->id }}, '{{ addslashes($table->ten_ban) }}')"
+            class="size-10 rounded-xl flex items-center justify-center text-gray-500 hover:bg-red-500 hover:text-white transition-all opacity-0 group-hover:opacity-100">
+        <span class="material-symbols-outlined text-xl">delete</span>
+    </button>
+                                            @else
+                                                <button disabled
+                                                    class="size-11 rounded-xl flex items-center justify-center text-gray-600 cursor-not-allowed opacity-50">
+                                                    <span class="material-symbols-outlined text-2xl">delete</span>
+                                                </button>
+                                            @endif
+                                        </div>
+                                    @endforeach
+                                </div>
+                            </div>
+                        @endif
+                    @endforeach
+
+                    @if($tables->isEmpty())
+                        <div class="text-center text-gray-400 py-12 text-lg">
+                            Chưa có bàn nào để xóa.
+                        </div>
+                    @endif
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="bg-background-dark/50 p-6 flex justify-end border-t border-border-dark">
+                <button onclick="closeDeleteTablesModal()"
+                    class="px-8 py-3 rounded-xl bg-surface-dark border border-border-dark text-gray-300 hover:text-white font-bold text-sm transition-all">
+                    Đóng
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal xác nhận xóa bàn -->
+    <div id="confirm-delete-table-modal"
+        class="fixed inset-0 z-[110] hidden flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
+        <div
+            class="bg-surface-dark border border-border-dark rounded-3xl shadow-2xl p-10 max-w-lg w-full text-center animate-in fade-in zoom-in duration-200">
+            <div class="size-16 rounded-full bg-red-500/10 text-red-500 flex items-center justify-center mx-auto mb-6">
+                <span class="material-symbols-outlined text-4xl">warning</span>
+            </div>
+            <h3 class="text-2xl font-bold text-white mb-4">Xác nhận xóa bàn</h3>
+            <p class="text-gray-300 mb-3">Bạn có chắc chắn muốn xóa</p>
+            <p id="delete-table-name" class="text-xl font-bold text-red-500 mb-6"></p>
+            <p class="text-gray-400 mb-10">Hành động này không thể hoàn tác!</p>
+
+            <div class="flex justify-center gap-6">
+                <button id="cancel-delete-table"
+                    class="px-8 py-3 bg-surface-dark border border-border-dark text-gray-300 font-bold rounded-xl hover:bg-white/5 transition-all">
+                    Không xóa
+                </button>
+
+                <!-- Dùng <a> với GET thay vì form -->
+                <a id="confirm-delete-table-link" href="#"
+                    class="px-8 py-3 bg-red-600 text-white font-bold rounded-xl hover:bg-red-700 transition-all shadow-[0_0_20px_rgba(239,68,68,0.4)]">
+                    Có, xóa bàn
+                </a>
+            </div>
+        </div>
+    </div>
+
     <!-- Modal popup khi click bàn "Đã đặt" -->
     <div id="booked-table-modal"
         class="fixed inset-0 z-50 hidden items-center justify-center bg-black/70 backdrop-blur-sm p-4">
@@ -331,11 +451,12 @@
                     </div>
 
                     @if(session()->has('message'))
-                        <div id="session-alert" class="fixed left-1/2 top-4 -translate-x-1/2 z-[1000]
-                                                                                    flex items-center gap-3 px-6 py-3 rounded-xl
-                                                                                    bg-[#D8ECDA] border border-primary/30
-                                                                                    text-[#275626] text-sm font-medium
-                                                                                    shadow-2xl animate-fade-in-up">
+                        <div id="session-alert"
+                            class="fixed left-1/2 top-4 -translate-x-1/2 z-[1000]
+                                                                                                                                    flex items-center gap-3 px-6 py-3 rounded-xl
+                                                                                                                                    bg-[#D8ECDA] border border-primary/30
+                                                                                                                                    text-[#275626] text-sm font-medium
+                                                                                                                                    shadow-2xl animate-fade-in-up">
 
                             <span class="material-symbols-outlined text-xl text-[#275626] flex-shrink-0">
                                 check_circle
@@ -347,10 +468,10 @@
 
                             <button type="button" aria-label="Đóng" onclick="closeSessionAlert()"
                                 class="ml-2 flex items-center justify-center
-                                                                                                           w-7 h-7 rounded-full
-                                                                                                           text-[#275626]
-                                                                                                           bg-[#9FB8A0]/20 hover:bg-[#9FB8A0]/40
-                                                                                                           transition-all duration-200">
+                                                                                                                                                           w-7 h-7 rounded-full
+                                                                                                                                                           text-[#275626]
+                                                                                                                                                           bg-[#9FB8A0]/20 hover:bg-[#9FB8A0]/40
+                                                                                                                                                           transition-all duration-200">
                                 <span class="material-symbols-outlined text-lg">close</span>
                             </button>
                         </div>
@@ -397,6 +518,15 @@
                                 <span>Thêm bàn mới</span>
                             </button>
                         @endif
+
+                        <!-- Nút Xóa bàn - chỉ admin -->
+                        @if(Auth::user()->usertype === 'admin')
+                            <button onclick="openDeleteTablesModal()"
+                                class="flex items-center gap-2 bg-red-600/80 hover:bg-red-700 active:scale-95 transition-all text-white px-5 py-3 rounded-xl font-bold text-sm shadow-[0_0_20px_rgba(239,68,68,0.3)] cursor-pointer no-underline">
+                                <span class="material-symbols-outlined text-xl">delete_forever</span>
+                                <span>Xóa bàn</span>
+                            </button>
+                        @endif
                     </div>
                 </div>
                 <div id="table-tabs" class="flex items-center gap-2 overflow-x-auto no-scrollbar pb-2">
@@ -425,7 +555,7 @@
             <div class="flex-1 overflow-y-auto p-6 bg-background-dark">
                 <div id="table-grid"
                     class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-6">
-                    @foreach($tables as $table)
+                    @foreach($tables->whereNull('deleted_at') as $table)
                         @php
                             $activeBooking = $tableExtras[$table->id] ?? null;
                         @endphp
@@ -469,10 +599,11 @@
                             @endif
 
                             <!-- Icon và nền theo trạng thái -->
-                            <div class="size-24 rounded-full flex items-center justify-center transition-transform group-hover:scale-110 duration-300 mt-8
-                                        {{ $table->trang_thai == 'Trống' ? 'bg-primary/10 text-primary' : '' }}
-                                        {{ $table->trang_thai == 'Đang dùng' ? 'bg-yellow-500/10 text-yellow-500' : '' }}
-                                        {{ $table->trang_thai == 'Đã đặt' ? 'bg-blue-500/10 text-blue-500' : '' }}">
+                            <div
+                                class="size-24 rounded-full flex items-center justify-center transition-transform group-hover:scale-110 duration-300 mt-8
+                                                                                        {{ $table->trang_thai == 'Trống' ? 'bg-primary/10 text-primary' : '' }}
+                                                                                        {{ $table->trang_thai == 'Đang dùng' ? 'bg-yellow-500/10 text-yellow-500' : '' }}
+                                                                                        {{ $table->trang_thai == 'Đã đặt' ? 'bg-blue-500/10 text-blue-500' : '' }}">
                                 <span class="material-symbols-outlined text-4xl">
                                     {{ $table->trang_thai == 'Trống' ? 'table_restaurant' : '' }}
                                     {{ $table->trang_thai == 'Đang dùng' ? 'restaurant' : '' }}
@@ -482,10 +613,11 @@
 
                             <div class="text-center">
                                 <h3 class="text-white text-xl font-bold">Bàn {{ $table->ten_ban }}</h3>
-                                <p class="text-sm font-bold uppercase tracking-wide mt-1
-                                            {{ $table->trang_thai == 'Trống' ? 'text-primary' : '' }}
-                                            {{ $table->trang_thai == 'Đang dùng' ? 'text-yellow-500' : '' }}
-                                            {{ $table->trang_thai == 'Đã đặt' ? 'text-blue-500' : '' }}">
+                                <p
+                                    class="text-sm font-bold uppercase tracking-wide mt-1
+                                                                                            {{ $table->trang_thai == 'Trống' ? 'text-primary' : '' }}
+                                                                                            {{ $table->trang_thai == 'Đang dùng' ? 'text-yellow-500' : '' }}
+                                                                                            {{ $table->trang_thai == 'Đã đặt' ? 'text-blue-500' : '' }}">
                                     {{ $table->trang_thai }}
                                 </p>
                             </div>
@@ -738,7 +870,40 @@
                 setInterval(checkExpire, 1000);
             });
         });
+
+        // Mở modal danh sách bàn để xóa
+        function openDeleteTablesModal() {
+            document.getElementById('delete-tables-modal').classList.remove('hidden');
+        }
+
+        // Đóng modal danh sách bàn
+        function closeDeleteTablesModal() {
+            document.getElementById('delete-tables-modal').classList.add('hidden');
+        }
+
+        // Mở modal xác nhận xóa bàn cụ thể
+        function confirmDeleteTable(tableId, tableName) {
+            document.getElementById('delete-table-name').textContent = `Bàn ${tableName}?`;
+
+            // Cập nhật link GET
+            const link = document.getElementById('confirm-delete-table-link');
+            link.href = `/delete_table/${tableId}`;
+
+            // Mở modal
+            document.getElementById('confirm-delete-table-modal').classList.remove('hidden');
+        }
+
+        // Đóng modal xác nhận
+        document.getElementById('cancel-delete-table')?.addEventListener('click', () => {
+            document.getElementById('confirm-delete-table-modal').classList.add('hidden');
+        });
+
+        // Optional: Đóng modal danh sách khi click bên ngoài
+        document.getElementById('delete-tables-modal')?.addEventListener('click', function (e) {
+            if (e.target === this) closeDeleteTablesModal();
+        });
     </script>
+
 
 </body>
 

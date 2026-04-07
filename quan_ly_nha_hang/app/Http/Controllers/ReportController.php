@@ -262,6 +262,7 @@ class ReportController extends Controller
         }
 
         // Tính %
+        // Tính % (giữ nguyên logic bù 100%)
         $categoryPercent = [];
         if ($totalCategoryRevenue > 0) {
             $categories = ['Món chính', 'Đồ uống', 'Khai vị', 'Tráng miệng'];
@@ -276,7 +277,7 @@ class ReportController extends Controller
                 $sumRounded += $rounded;
             }
 
-            // Bù cho phần cuối (hoặc phần lớn nhất)
+            // Bù cho phần cuối
             $lastCat = end($categories);
             $percentages[$lastCat] += (100 - $sumRounded);
 
@@ -285,7 +286,18 @@ class ReportController extends Controller
             $categoryPercent = array_fill_keys(['Món chính', 'Đồ uống', 'Khai vị', 'Tráng miệng'], 0);
         }
 
-        \Log::info('Category Percent Final: ', $categoryPercent);
+        // === BƯỚC QUAN TRỌNG: Normalize key để tránh lỗi UTF-8/JSON ===
+        $normalizedCategoryPercent = [];
+        foreach ($categoryPercent as $key => $value) {
+            // Loại bỏ khoảng trắng thừa, giữ nguyên dấu tiếng Việt
+            $cleanKey = trim($key);
+            // Nếu cần, bạn có thể thêm bước chuẩn hóa khác (nhưng thường trim là đủ)
+            $normalizedCategoryPercent[$cleanKey] = $value;
+        }
+        $categoryPercent = $normalizedCategoryPercent;
+
+        // Log để kiểm tra key cuối cùng trước khi gửi
+        \Log::info('Category Percent sau normalize (gửi cho view/AJAX): ', $categoryPercent);
 
         // === MÓN ĂN BÁN CHẠY NHẤT (top 3) ===
         $topFoods = DB::table('order_items')
